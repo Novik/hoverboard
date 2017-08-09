@@ -28,6 +28,7 @@
 <link rel="import" href="elements/toast-element.html">
 
 <link rel="import" href="pages/home-page.html">
+<link rel="import" href="elements/profile-details.html">
 
 
 <dom-module id="hoverboard-app">
@@ -212,6 +213,13 @@
 
     <toast-element id="toast" app="{{app}}"></toast-element>
 
+    <profile-details id="profileDetails"
+                     app="{{app}}"
+                     entry-animation="scale-up-animation"
+                     exit-animation="fade-out-animation"
+                     with-backdrop>
+    </profile-details>
+
   </template>
 
   <script>
@@ -372,6 +380,14 @@
                 navigator.credentials.requireUserMediation();
               }
             });
+        },
+
+        profile: function()
+        {
+	    window.requestAnimationFrame(function () 
+	    {
+	      this.$.profileDetails.open();
+            }.bind(this));
         },
 
         _autoSignIn: function (authStatusKnown) {

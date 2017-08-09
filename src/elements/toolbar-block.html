@@ -180,6 +180,7 @@
                 <span class="profile-name">[[app.user.displayName]]</span>
                 <span class="profile-email">[[app.user.email]]</span>
                 <span class="profile-action" role="button" on-tap="signOut">{$ signOut $}</span>
+                <span class="profile-action" role="button" on-tap="profile">{$ profile $}</span>
               </div>
             </div>
           </div>
@@ -227,6 +228,10 @@
 
         signOut: function () {
           HOVERBOARD.Elements.Template.signOut();
+        },
+
+	profile: function () {
+          HOVERBOARD.Elements.Template.profile();
         },
 
         _stylesChanged: function (headerSettings) {

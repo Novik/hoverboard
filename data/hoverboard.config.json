@@ -16,12 +16,13 @@
     "backgroundColor": "#F57C00"
   },
   "firebase": {
-    "name": "hoverboard-experimental",
-    "domain": "hoverboard-experimental.firebaseapp.com",
-    "database": "https://hoverboard-experimental.firebaseio.com",
-    "api": "AIzaSyALDa2D7CMhK_wt2VkET1MaJuQXYVUJd2I",
+    "name": "hoverboard",
+    "domain": "hoverboard-96745.firebaseapp.com",
+    "database": "https://hoverboard-96745.firebaseio.com",
+    "api": "AIzaSyC2E8LfKPRZi3jTkcPesGufhLBOTB4uVbU",
     "userSessionsPath": "/userSessions",
     "ratingsPath": "/ratings",
+    "userDetailsPath": "/userDetails",
     "indexedDbSession": "hoverboard"
   },
   "mailchimp": {

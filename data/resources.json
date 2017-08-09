@@ -50,6 +50,7 @@
   "shareWith": "Share with",
   "signIn": "Sign in",
   "signOut": "Sign out",
+  "profile": "Profile",
   "mySchedule": "My Schedule",
   "browseMore": "Browse more events",
   "youShouldSignInSessions": "Sign in to save sessions",
@@ -58,6 +59,7 @@
   "removedFromSchedule": "Removed from My Schedule",
   "addedToSchedule": "Added to My Schedule",
   "rateSession": "Rate session",
+  "profileUpdated": "Profile was updated successfuly",
   "footerBlocks": [
     {
       "title": "For visitors",
