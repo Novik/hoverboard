@@ -8,6 +8,7 @@
                                                                                                 
 <link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
@@ -18,6 +19,7 @@
 
 <link rel="import" href="../../bower_components/app-datepicker/app-datepicker-dialog.html">
 
+<link rel="import" href="../styles/bootstrap-grid.html">
 <link rel="import" href="../styles/dialog-styles.html">
 <link rel="import" href="../styles/shared-styles.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
@@ -28,7 +30,51 @@
 
   <template>
 
-    <style include="shared-styles dialog-styles"></style>
+    <style include="shared-styles dialog-styles">
+      paper-input 
+      { 
+        --paper-input-container: { padding: 0; };
+        --paper-input-container-label: { font-size: 14px; };
+        --paper-input-container-input: { font-size: 14px; };
+      }
+
+      :host 
+      {
+        --paper-icon-button: 
+        {
+          padding: 4px;
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      paper-radio-group
+      {
+        --paper-radio-group-item-padding: 5px;
+      }
+
+      paper-radio-button
+      {
+        line-height: 27px;
+      }
+
+      paper-radio-button paper-input 
+      {
+        display: inline-block;
+      }
+
+      section
+      {
+        margin-bottom: 40px;
+        margin-top: 10px;
+      }
+
+      section label
+      {
+        display: block;
+        padding: 5px 0;
+      }
+    </style>
 
     <paper-scroll-header-panel id="scrollHeaderPanel" condenses="{{app.isPhoneSize}}" no-reveal="{{!app.isPhoneSize}}" fixed>
       <paper-toolbar class="" slot="header">
@@ -40,25 +86,60 @@
           <paper-button class="primary" raised on-tap="_updateProfile">Update</paper-button>
         </div>
       </paper-toolbar>
-      <div class="content" slot="content">
-        <iron-form id='userDetails'>
-          <form>
-            <fieldset>
-              <legend>About you</legend>
-<div class='sections'>
-<div class='section'>
-          <paper-input label="displayName" type="text" id="displayName" name="displayName" value="{{displayName}}" required auto-validate></paper-input>
-</div>
-<div class='section'>
-          <paper-input label="Arrival date" type="text" id="arrivalDate" name="arrivalDate" value="{{userDetails.arrivalDate}}" auto-validate pattern="^[0-9]{4}/(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])$">
-            <paper-icon-button suffix icon="calendar-check" on-tap="_showArrivalDateDlg"></paper-icon-button>
-          </paper-input>
-</div>
-</div>
-          <paper-input label="fullName" type="text" id="fullName" name="fullName" value="{{userDetails.name}}" required auto-validate></paper-input>
-            </fieldset>
-          </form>
-        </iron-form>
+      <div slot="content">
+        <bootstrap-grid>
+          <iron-form id='userDetails'><form>
+            <p>If you have already made arrangements for your trip, enter the details
+            here. Exclude name, all data is optional.</p>
+            <section>
+            <h3>About you</h3>
+            <div class='row'>
+              <paper-input class='col-sm-6' label="Name" type="text" id="displayName" name="displayName" value="{{displayName}}" required auto-validate></paper-input>
+              <paper-input class='col-sm-6' label="Organization" type="text" id="organization" name="organization" value="{{userDetails.organization}}" auto-validate></paper-input>
+            </div>
+            </section>
+            <section>
+            <h3>Your trip</h3>
+            <div class='row'>
+              <paper-input class='col-sm-6' label="Arrival date" type="text" id="arrivalDate" name="arrivalDate" value="{{userDetails.arrivalDate}}" auto-validate pattern="^[0-9]{4}/(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])$">
+                <paper-icon-button suffix icon="calendar-check" on-tap="_showArrivalDateDlg"></paper-icon-button>
+              </paper-input>
+              <paper-input class='col-sm-6' label="Departure date" type="text" id="departureDate" name="departureDate" value="{{userDetails.departureDate}}" auto-validate pattern="^[0-9]{4}/(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])$">
+                <paper-icon-button suffix icon="calendar-check" on-tap="_showDepartureDateDlg"></paper-icon-button>
+              </paper-input>
+            </div>
+            <div class='row'>
+              <paper-input class='col-sm-6' label="Arriving from" type="text" id="arrivingFrom" name="arrivingFrom" value="{{userDetails.arrivingFrom}}" auto-validate></paper-input>
+              <paper-input class='col-sm-6' label="Flight" type="text" id="flight" name="flight" value="{{userDetails.flight}}" auto-validate></paper-input>
+            </div>
+            </section>
+            <section>
+            <h3>The conference</h3>
+            <label id="regLabel">Registration status</label>
+            <paper-radio-group aria-labelledby="regLabel" selected="{{userDetails.registrationStatus}}" layout vertical left>
+              <paper-radio-button noink name="confirmed">Confirmed (accepted by your org and Google)</paper-radio-button>
+              <paper-radio-button noink name="wait">On wait list</paper-radio-button>
+              <paper-radio-button noink name="not_attended">Not attending the conference but want to participate in unofficial activities</paper-radio-button>
+            </paper-radio-group>
+            <div class='row'>
+              <paper-input class='col-sm-6' label="Staying at (hotel name or anything else)" type="text" id="stayingAt" name="stayingAt" value="{{userDetails.stayingAt}}" auto-validate></paper-input>
+            </div>
+            </section>
+            <section>
+            <h3>Proof that you belong here</h3>
+            <paper-radio-group selected="{{userDetails.belongHereProof}}" layout vertical left>
+              <paper-radio-button noink name="mailing_list">I have written in the mentor mailing list, just look me up!</paper-radio-button>
+              <paper-radio-button noink name="organization">I appear listed in my organization GSoC page at this page <paper-input no-label-float label="URL" type="text" id="url" name="url" value="{{userDetails.url}}" auto-validate></paper-input></paper-radio-button>
+              <paper-radio-button noink name="pull_request">I have merged some pull request from my student <paper-input no-label-float label="Student name" type="text" id="student" name="student" value="{{userDetails.student}}" auto-validate></paper-input></paper-radio-button>
+              <paper-radio-button noink name="other"><paper-input no-label-float label="Other" type="text" id="other" name="other" value="{{userDetails.other}}" auto-validate></paper-input></paper-radio-button>
+            </paper-radio-group>
+            </section>
+            <p>Because the whole point of this website is that mentors can share a
+            bit of information to organize activies around the event, you must be
+            approved before you can do searches, add activities, or sign up for
+            activities.</p>
+          </form></iron-form>
+        </bootstrap-grid>
       </div>
     </paper-scroll-header-panel>
 
@@ -66,6 +147,15 @@
       id="arrivalDateDlg" 
       input-date="[[userDetails.arrivalDate]]" 
       date="{{userDetails.arrivalDate}}" 
+      theme="dark-theme" 
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation">
+    </app-datepicker-dialog>
+
+    <app-datepicker-dialog
+      id="departureDateDlg" 
+      input-date="[[userDetails.departureDate]]" 
+      date="{{userDetails.departureDate}}" 
       theme="dark-theme" 
       entry-animation="scale-up-animation"
       exit-animation="fade-out-animation">
@@ -123,6 +213,11 @@
         	this.$.arrivalDateDlg.open();
         },
 
+        _showDepartureDateDlg: function()
+        {
+        	this.$.departureDateDlg.open();
+        },
+
         behaviors: [
           Polymer.PaperDialogBehavior,
           Polymer.NeonAnimationRunnerBehavior,
@@ -159,6 +254,7 @@
             this.locked = true;
   	    this.close();
   	    this.userPersistedData = Object.assign({}, this.userDetails);
+  	    this.userPersistedData.alreadyLaunched = true;
             const displayName = this.$$('#displayName').value;
             this.app.user.updateProfile(
             {

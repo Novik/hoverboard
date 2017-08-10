@@ -44,7 +44,8 @@
     "polymerfire": "firebase/polymerfire#^0.10.0",
     "time-elements": "github/time-elements#^0.6.0",
     "app-datepicker": "^2.11.1",
-    "paper-date-picker": "polymer-paper-date-picker#^1.2.1"
+    "paper-radio-button": "PolymerElements/paper-radio-button#^2.0.0",
+    "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^4.3.0"

@@ -136,6 +136,13 @@
       status-known="{{_authStatusKnown}}"
     ></firebase-auth>
 
+    <firebase-document
+      id="userDetails"
+      app-name="{$ firebase.name $}"
+      path="{$ firebase.userDetailsPath $}/[[app.user.uid]]"
+      data="{{userPersistedData}}">
+    </firebase-document>
+
     <app-drawer-layout id="drawerLayout" drawer-width="599px" force-narrow>
 
       <app-drawer
@@ -253,6 +260,11 @@
             type: Boolean,
             value: false,
             observer: '_autoSignIn'
+          },
+
+          userPersistedData: {
+            type: Object,
+            observer: '_userDetailsChanged'
           },
 
           page: {
@@ -390,6 +402,16 @@
             }.bind(this));
         },
 
+        _userDetailsChanged: function() 
+        {
+          if(this._authStatusKnown && this.app.user && this.userPersistedData && !this.userPersistedData.alreadyLaunched)
+          {
+            this.userPersistedData.alreadyLaunched = true;
+            this.$.userDetails.save("{$ firebase.userDetailsPath $}",this.app.user.uid);
+            this.profile();
+          }
+        },
+
         _autoSignIn: function (authStatusKnown) {
           if (navigator.credentials
             && authStatusKnown
@@ -404,7 +426,7 @@
               if (cred) {
                 this.gSignIn(cred.id);
               }
-            }.bind(this));
+            });
           }
         },
 
