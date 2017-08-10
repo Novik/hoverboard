@@ -137,10 +137,10 @@
     ></firebase-auth>
 
     <firebase-document
-      id="userDetails"
+      id="userMarkers"
       app-name="{$ firebase.name $}"
-      path="{$ firebase.userDetailsPath $}/[[app.user.uid]]"
-      data="{{userPersistedData}}">
+      path="{$ firebase.userMarkersPath $}/[[app.user.uid]]"
+      data="{{userMarkersData}}">
     </firebase-document>
 
     <app-drawer-layout id="drawerLayout" drawer-width="599px" force-narrow>
@@ -262,9 +262,9 @@
             observer: '_autoSignIn'
           },
 
-          userPersistedData: {
+          userMarkersData: {
             type: Object,
-            observer: '_userDetailsChanged'
+            observer: '_userMarkersChanged'
           },
 
           page: {
@@ -402,13 +402,15 @@
             }.bind(this));
         },
 
-        _userDetailsChanged: function() 
+        _userMarkersChanged: function() 
         {
-          if(this._authStatusKnown && this.app.user && this.userPersistedData && !this.userPersistedData.alreadyLaunched)
+          if(this._authStatusKnown && this.app.user && this.userMarkersData && !this.userMarkersData.alreadyLaunched)
           {
-            this.userPersistedData.alreadyLaunched = true;
-            this.$.userDetails.save("{$ firebase.userDetailsPath $}",this.app.user.uid);
-            this.profile();
+            this.userMarkersData.alreadyLaunched = true;
+            this.$.userMarkers.save("{$ firebase.userMarkersPath $}",this.app.user.uid).then(() => 
+            {
+              this.profile();
+            });
           }
         },
 

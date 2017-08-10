@@ -253,12 +253,14 @@
           {
             this.locked = true;
   	    this.close();
-  	    this.userPersistedData = Object.assign({}, this.userDetails);
-  	    this.userPersistedData.alreadyLaunched = true;
             const displayName = this.$$('#displayName').value;
             this.app.user.updateProfile(
             {
               displayName: displayName
+            }).then(() => 
+            {
+    	      this.userPersistedData = Object.assign({}, this.userDetails);
+	      return this.$.userDetails.save("{$ firebase.userDetailsPath $}",this.app.user.uid);
             }).then(() => 
             {
               this.notifyPath('app.user.displayName');
