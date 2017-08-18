@@ -48,6 +48,11 @@
         }
       }
 
+      :host > * 
+      {
+        line-height: 1.4;
+      }
+
       paper-radio-group
       {
         --paper-radio-group-item-padding: 5px;
@@ -129,8 +134,8 @@
             <h3>Proof that you belong here</h3>
             <paper-radio-group selected="{{userDetails.belongHereProof}}" layout vertical left>
               <paper-radio-button noink name="mailing_list">I have written in the mentor mailing list, just look me up!</paper-radio-button>
-              <paper-radio-button noink name="organization">I appear listed in my organization GSoC page at this page <paper-input no-label-float label="URL" type="text" id="url" name="url" value="{{userDetails.url}}" auto-validate></paper-input></paper-radio-button>
-              <paper-radio-button noink name="pull_request">I have merged some pull request from my student <paper-input no-label-float label="Student name" type="text" id="student" name="student" value="{{userDetails.student}}" auto-validate></paper-input></paper-radio-button>
+              <paper-radio-button noink name="organization">I appear listed in my organization GSoC page at this page&nbsp;&nbsp;&nbsp;<paper-input no-label-float label="URL" type="text" id="url" name="url" value="{{userDetails.url}}" auto-validate></paper-input></paper-radio-button>
+              <paper-radio-button noink name="pull_request">I have merged some pull request from my student&nbsp;&nbsp;&nbsp;<paper-input no-label-float label="Student name" type="text" id="student" name="student" value="{{userDetails.student}}" auto-validate></paper-input></paper-radio-button>
               <paper-radio-button noink name="other"><paper-input no-label-float label="Other" type="text" id="other" name="other" value="{{userDetails.other}}" auto-validate></paper-input></paper-radio-button>
             </paper-radio-group>
             </section>
