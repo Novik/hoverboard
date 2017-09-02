@@ -46,6 +46,10 @@
       "permalink": "/"
     },
     {
+      "route": "activities",
+      "permalink": "/activities/"
+    },
+    {
       "route": "blog",
       "permalink": "/blog/"
     },
@@ -129,6 +133,14 @@
         },
         "hideLogo": true,
         "minHeight": "360px"
+      }
+    },
+    "activities": {
+      "title": "Activities",
+      "headerSettings": {
+        "backgroundColor": "#03a9f4",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
       }
     },
     "blog": {

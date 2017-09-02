@@ -1,6 +1,5 @@
 {
   "rules": {
-    ".read": true,
     ".write": false,
     "ratings": {
       ".read": false,
@@ -18,25 +17,29 @@
         ".write": "auth.uid === $uid"
       }
     },
-    "userDetails": {
-      ".read": false,
-      ".write": false,
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid"
-      }
-    },
-    "userMarkers": {
-      ".read": false,
-      ".write": false,
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid"
-      }
-    },
     "speakers": {
       ".read": true,
       ".write": "root.child('users').child(auth.uid).child('rules').child('speakers').val() === true"
+    },
+    "userDetails": {
+      ".read": true,
+      ".write": false,
+      "$uid": {
+        ".write": "auth.uid === $uid"
+      }
+    },      
+    "activities": {
+      ".read": true,
+      "$aid": {
+        ".write": "(auth != null) && (!data.exists() || data.child('owner').val() === auth.uid) && (!newData.exists() || newData.child('owner').val() === auth.uid)",
+        ".indexOn": "public"
+      }
+    },
+    "participants": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid"
+      }  
     }
   }
 }

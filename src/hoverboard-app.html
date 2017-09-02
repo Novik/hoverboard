@@ -137,10 +137,10 @@
     ></firebase-auth>
 
     <firebase-document
-      id="userMarkers"
+      id="userDetails"
       app-name="{$ firebase.name $}"
-      path="{$ firebase.userMarkersPath $}/[[app.user.uid]]"
-      data="{{userMarkersData}}">
+      path="{$ firebase.userDetailsPath $}/[[app.user.uid]]"
+      data="{{userDetailsData}}">
     </firebase-document>
 
     <app-drawer-layout id="drawerLayout" drawer-width="599px" force-narrow>
@@ -183,6 +183,11 @@
                      people="{{speakers}}"
                      posts="{{posts}}"
                      videos="{{videos}}"></home-page>
+
+          <activities-page name="activities"
+                     activities="{{activities}}" 
+                     app="{{app}}"
+                     route="{{subRoute}}"></activities-page>
 
           <blog-page name="blog"
                      app="{{app}}"
@@ -262,11 +267,6 @@
             observer: '_autoSignIn'
           },
 
-          userMarkersData: {
-            type: Object,
-            observer: '_userMarkersChanged'
-          },
-
           page: {
             type: String,
             reflectToAttribute: true
@@ -281,12 +281,15 @@
         observers: [
           '_routePageChanged(routeData.page)',
           '_pageChanged(app.page)',
-          'stylesChanged(app.headerSettings)'
+          'stylesChanged(app.headerSettings)',
+          '_updateUserDetails(app.user)',
+          '_checkFirstLaunch(userDetailsData.alreadyLaunched)'
         ],
 
         ready: function () {
           Polymer.RenderStatus.afterNextRender(this, function () {
             HOVERBOARD.ServiceWorkerRegistration.register();
+            this.importHref(this.resolveUrl('pages/activities-page.html'), null, null, true);
             this.importHref(this.resolveUrl('pages/schedule-page.html'), null, null, true);
             this.importHref(this.resolveUrl('pages/speakers-page.html'), null, null, true);
             this.importHref(this.resolveUrl('pages/blog-page.html'), null, null, true);
@@ -371,7 +374,7 @@
 
         signIn: function () {
           this.$.auth.signInWithPopup()
-            .then(function (signInObject) {
+            .then( function(signInObject) {
               if (navigator.credentials) {
                 var cred = new FederatedCredential({
                   id: signInObject.user.email,
@@ -402,15 +405,15 @@
             }.bind(this));
         },
 
-        _userMarkersChanged: function() 
+        _checkFirstLaunch: function(alreadyLaunched) 
         {
-          if(this._authStatusKnown && this.app.user && this.userMarkersData && !this.userMarkersData.alreadyLaunched)
+          if(this._authStatusKnown && this.app.user && this.$.auth.app && !alreadyLaunched)
           {
-            this.userMarkersData.alreadyLaunched = true;
-            this.$.userMarkers.save("{$ firebase.userMarkersPath $}",this.app.user.uid).then(() => 
+            this.$.auth.app.database().ref("{$ firebase.userDetailsPath $}/"+this.app.user.uid).update(
             {
-              this.profile();
-            });
+              displayName: this.app.user.displayName,
+              alreadyLaunched: true
+            }).then( this.profile.bind(this) );
           }
         },
 
@@ -428,6 +431,18 @@
               if (cred) {
                 this.gSignIn(cred.id);
               }
+            });
+          }
+        },
+
+        _updateUserDetails: function(user)
+        {
+          if( user && user.uid && this.$.auth.app)
+          {
+            this.$.auth.app.database().ref("{$ firebase.userDetailsPath $}/"+user.uid).update(
+            {
+              providerName: user.providerData[0].displayName,
+              photoURL: user.photoURL
             });
           }
         },

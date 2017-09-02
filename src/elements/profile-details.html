@@ -3,7 +3,6 @@
 <link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown-scroll-manager.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
                                                                                                 
 <link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
@@ -93,13 +92,13 @@
       </paper-toolbar>
       <div slot="content">
         <bootstrap-grid>
-          <iron-form id='userDetails'><form>
+          <iron-form id='userDetailsForm'><form>
             <p>If you have already made arrangements for your trip, enter the details
             here. Exclude name, all data is optional.</p>
             <section>
             <h3>About you</h3>
             <div class='row'>
-              <paper-input class='col-sm-6' label="Name" type="text" id="displayName" name="displayName" value="{{displayName}}" required auto-validate></paper-input>
+              <paper-input class='col-sm-6' label="Name" type="text" id="displayName" name="displayName" value="{{userDetails.displayName}}" required auto-validate></paper-input>
               <paper-input class='col-sm-6' label="Organization" type="text" id="organization" name="organization" value="{{userDetails.organization}}" auto-validate></paper-input>
             </div>
             </section>
@@ -153,8 +152,10 @@
       input-date="[[userDetails.arrivalDate]]" 
       date="{{userDetails.arrivalDate}}" 
       theme="dark-theme" 
+      disable-days="[]"
       entry-animation="scale-up-animation"
-      exit-animation="fade-out-animation">
+      exit-animation="fade-out-animation"
+      >
     </app-datepicker-dialog>
 
     <app-datepicker-dialog
@@ -162,6 +163,7 @@
       input-date="[[userDetails.departureDate]]" 
       date="{{userDetails.departureDate}}" 
       theme="dark-theme" 
+      disable-days="[]"
       entry-animation="scale-up-animation"
       exit-animation="fade-out-animation">
     </app-datepicker-dialog>
@@ -192,36 +194,18 @@
                 user: {}
               };
             }
+          },
+
+          userDetails: 
+          {
+            type: Object,
+            notify: true
           }
         },
 
         observers: [
-          '_userChanged(app.user)',
-          '_userDetailsChanged(userPersistedData)'
+          '_userDetailsChanged(userPersistedData.*)'
         ],
-
-        _userChanged: function(user) 
-        {
-          if(user)
-          {
-            this.displayName = user.displayName;
-          }
-        },
-
-        _userDetailsChanged: function(userDetails) 
-        {
-            this.userDetails = Object.assign({}, userDetails);
-        },
-
-        _showArrivalDateDlg: function()
-        {
-        	this.$.arrivalDateDlg.open();
-        },
-
-        _showDepartureDateDlg: function()
-        {
-        	this.$.departureDateDlg.open();
-        },
 
         behaviors: [
           Polymer.PaperDialogBehavior,
@@ -243,29 +227,47 @@
           });
         },
 
+        _userDetailsChanged: function(userDetails) 
+        {
+          this._resetProfileData(userDetails.base);
+        },
+
+        _resetProfileData: function(userDetails)
+        {
+          this.userDetails = Object.assign( {}, userDetails);
+        },
+
+        _showArrivalDateDlg: function()
+        {
+          this.$.arrivalDateDlg.open();
+        },
+
+        _showDepartureDateDlg: function()
+        {
+          this.$.departureDateDlg.open();
+        },
+
         _dismissProfile: function() 
         {
           if(!this.locked)
           {
-            this._userChanged(this.app.user);
-            this._userDetailsChanged(this.userPersistedData);
+            this._resetProfileData(this.userPersistedData);
           }
         },
 
-        _updateProfile: function(e) 
+        _updateProfile: function() 
         {
-          if( this.$$('#userDetails').validate() )
+          if( this.$$('#userDetailsForm').validate() )
           {
             this.locked = true;
   	    this.close();
-            const displayName = this.$$('#displayName').value;
-            this.app.user.updateProfile(
+  	    this.userPersistedData = Object.assign({}, this.userDetails);
+            this.$.userDetails.save("{$ firebase.userDetailsPath $}",this.app.user.uid).then(() =>
             {
-              displayName: displayName
-            }).then(() => 
-            {
-    	      this.userPersistedData = Object.assign({}, this.userDetails);
-	      return this.$.userDetails.save("{$ firebase.userDetailsPath $}",this.app.user.uid);
+              return( this.app.user.updateProfile(
+              {
+                displayName: this.userPersistedData.displayName
+              }));
             }).then(() => 
             {
               this.notifyPath('app.user.displayName');

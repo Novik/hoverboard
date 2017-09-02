@@ -1,0 +1,226 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+
+<link rel="import" href="../styles/shared-styles.html">
+<link rel="import" href="../elements/activity-details.html">
+<link rel="import" href="../elements/footer-block.html">
+<link rel="import" href="../elements/activity-cards.html">
+<link rel="import" href="../behaviors/utils-behavior.html">
+<link rel="import" href="../behaviors/page-behavior.html">
+<link rel="import" href="../behaviors/cascaded-behavior.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+
+<dom-module id="activities-page">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .nav-container
+      {
+      	padding-bottom: 0;
+      }
+
+      .subpage-nav {
+        padding: 0 16px;
+        height: 69px;
+        background: var(--default-primary-color);
+      }
+
+      .subpage-nav[phoneSize] {
+        padding: 0 8px;
+      }
+
+      .subpage-nav[phoneSize] .activity-tabs {
+        width: 100%;
+      }
+
+      .activity-tabs {
+        height: 100%;
+        --paper-tabs-selection-bar-color: var(--text-primary-color);
+      }
+
+      .subpage-nav[phoneSize] .activity-tabs::before,
+      .subpage-nav[phoneSize] .activity-tabs::after {
+        display: block;
+        width: 8px;
+        height: 100%;
+        top: 0;
+        position: absolute;
+        z-index: 1;
+        content: "";
+        background: linear-gradient(to right, var(--default-primary-color) 10%, rgba(147, 126, 232, 0) 100%);
+      }
+
+      .subpage-nav[phoneSize] .activity-tabs::after {
+        right: 0;
+        background: linear-gradient(to left, var(--default-primary-color) 10%, rgba(147, 126, 232, 0) 100%);
+      }
+
+      .activity-tabs paper-tab {
+        margin: 0 8px;
+      }
+
+    </style>
+
+    <firebase-query
+      id="all_activities"
+      app-name="{$ firebase.name $}"
+      path="/activities"
+      data="{{allActivities}}"></firebase-query>
+
+    <firebase-query
+      id="public_activities"
+      app-name="{$ firebase.name $}"
+      path="/activities"
+      data="{{publicActivities}}"
+      order-by-child="public"
+      equal-to="true"></firebase-query>
+
+    <firebase-query
+      id="my_activities"
+      app-name="{$ firebase.name $}"
+      path="/participants/[[app.user.uid]]"
+      data="{{myActivities}}"></firebase-query>
+
+    <activity-details id="activityDetails"
+                     app="{{app}}"
+                     activity-id="[[_selectedActivity]]"
+                     entry-animation="scale-up-animation"
+                     exit-animation="fade-out-animation"
+                     with-backdrop>
+    </activity-details>
+
+    <app-route route="{{route}}"
+               pattern="/:activityId"
+               data="{{routeData}}"></app-route>
+    <template is="dom-if" if="[[app.user]]">
+      <div class="container nav-container">
+        <nav
+          class="subpage-nav"
+          phoneSize$="[[app.isPhoneSize]]"
+          layout horizontal center justified relative>
+          <paper-tabs
+            class="activity-tabs"
+            selected="{{section}}"
+            scrollable="[[app.isPhoneSize]]"
+            relative
+            hide-scroll-buttons>
+            <paper-tab>All Activities</paper-tab>
+            <paper-tab>My Activities</paper-tab>
+          </paper-tabs>
+	  <div layout horizontal center>
+	    <paper-icon-button icon="add-box" aria-label="Add Activity" on-tap="_addActivity"></paper-icon-button>
+          </div>
+        </nav>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_isAllSection(app.user,section)]]">
+      <activity-cards activities="[[allActivities]]"></activity-cards>
+    </template>
+    <template is="dom-if" if="[[_isMySection(app.user,section)]]">
+      <activity-cards activities="[[myActivities]]"></activity-cards>
+    </template>
+    <template is="dom-if" if="[[!app.user]]">
+      <activity-cards activities="[[publicActivities]]"></activity-cards>
+    </template>
+
+    <footer-block app="{{app}}" cascaded></footer-block>
+
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+
+        is: 'activities-page',
+
+        behaviors: [
+          HOVERBOARD.PageBehavior,
+          HOVERBOARD.CascadedBehavior,
+          HOVERBOARD.UtilsBehavior
+        ],
+
+        properties: {
+
+          route: {
+            type: Object
+          },
+
+          routeData: {
+            type: Object,
+            notify: true
+          },
+
+          section: {
+            type: String,
+            value: "0"
+          },
+
+          _selectedActivity: {
+            type: String,
+            notify: true
+          }
+        },
+
+        observers: [
+          '_routePageChanged(routeData.activityId)'
+        ],
+
+        listeners: {
+          'iron-overlay-closed': '_resetActivityIdParam'
+        },
+
+        _isAllSection: function()
+        {
+          return( this.app.user && this.section=="0" );
+        },
+
+        _isMySection: function()
+        {
+          return( this.app.user && this.section!="0" );
+        },
+
+        _routePageChanged: function(activityId) 
+        {
+          if(activityId && this.selected) 
+          {
+              window.requestAnimationFrame(function() 
+              {
+                this._selectedActivity = activityId;
+                this.$.activityDetails.open();
+              }.bind(this));
+          }
+        },
+
+        _resetActivityIdParam: function() 
+        {
+          this.set('routeData.activityId', null);
+        },
+
+        _getCustomStyleValue: function (value) {
+          return 'background-color: ' + this.getComputedStyleValue('--' + this._generateClass(value)) || this.getComputedStyleValue('--general');
+        }
+      });
+
+    }());
+  </script>
+
+</dom-module>
+
