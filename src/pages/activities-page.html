@@ -12,6 +12,7 @@
 
 <link rel="import" href="../styles/shared-styles.html">
 <link rel="import" href="../elements/activity-details.html">
+<link rel="import" href="../elements/activity-edit.html">
 <link rel="import" href="../elements/footer-block.html">
 <link rel="import" href="../elements/activity-cards.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
@@ -87,13 +88,15 @@
       app-name="{$ firebase.name $}"
       path="/activities"
       data="{{publicActivities}}"
-      order-by-child="public"
+      order-by-child="data/public"
       equal-to="true"></firebase-query>
 
     <firebase-query
       id="my_activities"
       app-name="{$ firebase.name $}"
-      path="/participants/[[app.user.uid]]"
+      path="/activities"
+      order-by-child="participants/[[app.user.uid]]/signed"
+      equal-to="true"
       data="{{myActivities}}"></firebase-query>
 
     <activity-details id="activityDetails"
@@ -103,6 +106,14 @@
                      exit-animation="fade-out-animation"
                      with-backdrop>
     </activity-details>
+
+    <activity-edit id="activityEdit"
+                     app="{{app}}"
+                     activity-id="[[_selectedActivity]]"
+                     entry-animation="scale-up-animation"
+                     exit-animation="fade-out-animation"
+                     with-backdrop>
+    </activity-edit>
 
     <app-route route="{{route}}"
                pattern="/:activityId"
@@ -123,7 +134,7 @@
             <paper-tab>My Activities</paper-tab>
           </paper-tabs>
 	  <div layout horizontal center>
-	    <paper-icon-button icon="add-box" aria-label="Add Activity" on-tap="_addActivity"></paper-icon-button>
+	    <paper-icon-button icon="add-box" aria-label="Add Activity" on-tap="_onAddActivity"></paper-icon-button>
           </div>
         </nav>
       </div>
@@ -187,6 +198,15 @@
           'iron-overlay-closed': '_resetActivityIdParam'
         },
 
+        _onAddActivity: function()
+        {
+          window.requestAnimationFrame(function() 
+          {
+            this._selectedActivity = null;
+            this.$.activityEdit.open();
+          }.bind(this));
+        },
+
         _isAllSection: function()
         {
           return( this.app.user && this.section=="0" );
@@ -199,19 +219,30 @@
 
         _routePageChanged: function(activityId) 
         {
-          if(activityId && this.selected) 
+          if(this.selected)
           {
-              window.requestAnimationFrame(function() 
-              {
-                this._selectedActivity = activityId;
-                this.$.activityDetails.open();
-              }.bind(this));
+            if(activityId) 
+            {
+                window.requestAnimationFrame(function() 
+                {
+                  this._selectedActivity = activityId;
+                  this.$.activityDetails.open();
+                }.bind(this));
+            }
+            else
+            {
+               this._selectedActivity = null;
+               this.$.activityDetails.close();
+            }
           }
         },
 
-        _resetActivityIdParam: function() 
+        _resetActivityIdParam: function(e) 
         {
-          this.set('routeData.activityId', null);
+          if(e.path.length && e.path[0]==this.$.activityDetails)
+          {
+            this.set('routeData.activityId', null);
+          }
         },
 
         _getCustomStyleValue: function (value) {

@@ -60,7 +60,17 @@
   "addedToSchedule": "Added to My Schedule",
   "rateSession": "Rate session",
   "profileUpdated": "Profile was updated successfuly",
-  "footerBlocks": [
+  "activityUpdated": "Activity was updated successfuly",
+  "activityCreated": "Activity was created successfuly",
+  "activityUpdateButton": "Update",
+  "activityCreateButton": "Create",
+  "activityUpdateTitle": "Edit activity",
+  "activityCreateTitle": "New activity",
+  "removedFromSubscription": "Removed from My Activities",
+  "addedToSubscription": "Added to My Activities",
+  "activityWasRemoved": "Activity was removed successfuly",
+  "footerBlocks": 
+  [
     {
       "title": "For visitors",
       "links": [

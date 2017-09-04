@@ -30,16 +30,16 @@
     },      
     "activities": {
       ".read": true,
+      ".indexOn": "data/public",
       "$aid": {
-        ".write": "(auth != null) && (!data.exists() || data.child('owner').val() === auth.uid) && (!newData.exists() || newData.child('owner').val() === auth.uid)",
-        ".indexOn": "public"
+        ".write": "(!data.exists() && newData.child('data').child('owner').val() === auth.uid) || data.child('data').child('owner').val() === auth.uid",
+        "participants":
+        {
+          "$uid": {
+            ".write": "auth.uid === $uid"
+          }
+        }
       }
-    },
-    "participants": {
-      ".read": true,
-      "$uid": {
-        ".write": "auth.uid === $uid"
-      }  
     }
   }
 }
