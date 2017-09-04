@@ -17,42 +17,6 @@
 (function () {
   'use strict';
 
-  var PROMISE_REJECTION_LOGGING_DELAY = 10 * 1000; // 10s
-  var logRejectionTimeoutId;
-  var unhandledRejections = [];
-
-  function logRejectedPromises() {
-    unhandledRejections.forEach(function (reason) {
-      HOVERBOARD.Analytics.trackError('UnhandledPromiseRejection', reason);
-    });
-
-    unhandledRejections = [];
-    logRejectionTimeoutId = null;
-  }
-
-  window.addEventListener('unhandledrejection', function (event) {
-    debugLog('unhandledrejection fired: ' + event.reason);
-    // Keep track of rejected promises by adding them to the list.
-    unhandledRejections.push({promise: event.promise, reason: event.reason});
-
-    // We need to wait before we log this rejected promise, since there's a
-    // chance it will be caught later on, in which case it's not an error.
-    if (!logRejectionTimeoutId) {
-      logRejectionTimeoutId = setTimeout(logRejectedPromises,
-        PROMISE_REJECTION_LOGGING_DELAY);
-    }
-  });
-
-  window.addEventListener('rejectionhandled', function (event) {
-    debugLog('rejectionhandled fired: ' + event.reason);
-
-    // If a previously rejected promise is handled, remove it from the list.
-    unhandledRejections = unhandledRejections.filter(function (rejection) {
-      rejection.promise !== event.promise;
-    });
-  });
-
-
   function lazyLoadWCPolyfillsIfNecessary(callback) {
     callback = callback || null;
     var onload = function () {
@@ -90,7 +54,6 @@
       polyfillScript.src = 'https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,intl';
       parent.insertBefore(polyfillScript, swScript);
 
-      ga('send', 'event', 'browser', 'unsupported-es6-intl', navigator.userAgent);
       console.log('Your browser is out-of-date. Please download one of these up-to-date, free and excellent browsers: Chrome, Chromium, Opera, Vivaldi');
     }
   }
@@ -100,19 +63,6 @@
       HOVERBOARD.Elements.Template.$.toast.showMessage(
         'You can still work offline.');
     }
-  });
-
-  // See https://developers.google.com/web/fundamentals/engage-and-retain/app-install-banners/advanced
-  window.addEventListener('beforeinstallprompt', function (event) {
-    HOVERBOARD.Analytics.trackEvent('installprompt', 'fired');
-
-    event.userChoice.then(function (choiceResult) {
-      // choiceResult.outcome will be 'accepted' or 'dismissed'.
-      // choiceResult.platform will be 'web' or 'android' if the prompt was
-      // accepted, or '' if the prompt was dismissed.
-      HOVERBOARD.Analytics.trackEvent('installprompt', choiceResult.outcome,
-        choiceResult.platform);
-    });
   });
 
   function initApp() {

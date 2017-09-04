@@ -144,22 +144,6 @@
             </div>
           </div>
         </animatable-content>
-        <animatable-content name="blog">
-          <div class="container">
-            <h3 class="page-title" hidden$="{{app.headerSettings.title}}">{$ pages.blog.title $}</h3>
-            <h3 class="page-title" hidden$="{{!app.headerSettings.title}}">[[app.headerSettings.title]]</h3>
-            <div class="page-subtitle" hidden$="{{!app.headerSettings.subtitle}}">[[app.headerSettings.subtitle]]</div>
-          </div>
-        </animatable-content>
-        {% for page, settings in pages %}
-          {% if page !== 'home' and page !== 'blog' %}
-            <animatable-content name="{$ page $}">
-              <div class="container">
-                <h3 class="page-title">{$ settings.title $}</h3>
-              </div>
-            </animatable-content>
-          {% endif %}
-        {% endfor %}
       </neon-animated-pages>
     </app-toolbar>
 
@@ -188,11 +172,9 @@
         _openVideo: function () {
           HOVERBOARD.Elements.Template.openVideo('{$ pages.home.headerSettings.video.title $}',
             '{$ pages.home.headerSettings.video.youtubeId $}', true);
-          HOVERBOARD.Analytics.trackEvent('video', 'watch', '{$ pages.home.headerSettings.video.title $}');
         },
 
         _scrollToTickets: function () {
-          HOVERBOARD.Analytics.trackEvent('ticket', 'buy_click', 'header');
           Polymer.AppLayout.scroll({
             top: HOVERBOARD.Elements.Tickets.getBoundingClientRect().top,
             behavior: 'smooth',

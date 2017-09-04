@@ -51,7 +51,6 @@ HOVERBOARD.ServiceWorkerRegistration = (function () {
             };
           };
         }).catch(function (e) {
-          HOVERBOARD.Analytics.trackError('navigator.serviceWorker.register() error', e);
           console.error('Service worker registration failed:', e);
         });
       }

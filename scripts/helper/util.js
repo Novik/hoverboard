@@ -179,12 +179,6 @@ HOVERBOARD.Util = HOVERBOARD.Util || (function () {
      * @param {Error|string} error The error to report.
      */
     var reportError = function (error) {
-      // Google Analytics has a max size of 500 bytes for the event location field.
-      // If we have an error with a stack trace, the trailing 500 bytes are likely to be the most
-      // relevant, so grab those.
-      var location = (error && typeof error.stack === 'string') ?
-        error.stack.slice(-500) : 'Unknown Location';
-      HOVERBOARD.Analytics.trackError(location, error);
     };
 
     /**

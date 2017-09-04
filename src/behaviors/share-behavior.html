@@ -71,7 +71,6 @@
           default:
             return;
         }
-        HOVERBOARD.Analytics.trackEvent('session', 'share', type);
         var shareMenu = Polymer.dom(this.root).querySelector(this.shareMenuSelector);
         shareMenu && shareMenu.close();
       }
