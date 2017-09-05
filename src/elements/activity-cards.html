@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../behaviors/cascaded-behavior.html">
+<link rel="import" href="../behaviors/utils-behavior.html">
 
 <dom-module id="activity-cards">
 
@@ -179,8 +180,14 @@
         is: 'activity-cards',
 
         behaviors: [
-          HOVERBOARD.CascadedBehavior
-        ]
+          HOVERBOARD.CascadedBehavior,
+          HOVERBOARD.UtilsBehavior
+        ],
+
+        _isSigned: function(user)
+        {
+          return(user.value['signed']);
+        }
 
       });
 

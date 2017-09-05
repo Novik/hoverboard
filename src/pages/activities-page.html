@@ -143,13 +143,13 @@
     </template>
 
     <template is="dom-if" if="[[_isAllSection(app.user,section)]]">
-      <activity-cards activities="[[allActivities]]"></activity-cards>
+      <activity-cards activities="[[allActivities]]" app="{{app}}"></activity-cards>
     </template>
     <template is="dom-if" if="[[_isMySection(app.user,section)]]">
-      <activity-cards activities="[[myActivities]]"></activity-cards>
+      <activity-cards activities="[[myActivities]]" app="{{app}}"></activity-cards>
     </template>
     <template is="dom-if" if="[[!app.user]]">
-      <activity-cards activities="[[publicActivities]]"></activity-cards>
+      <activity-cards activities="[[publicActivities]]" app="{{app}}"></activity-cards>
     </template>
 
     <footer-block app="{{app}}" cascaded></footer-block>

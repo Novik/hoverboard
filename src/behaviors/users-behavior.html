@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<script>
+  (function () {
+    'use strict';
+
+    /**
+     * @polymerBehavior HOVERBOARD.PageBehavior
+     */
+    HOVERBOARD.UsersBehavior = {
+      properties: 
+      {
+        app: 
+        {
+          type: Object,
+          notify: true,
+          value:
+          {
+            users: {}
+          }
+        }
+      },
+
+      _getUserProp: function(key,prop)
+      {
+        return( this.app.users && this.app.users[key] ? this.app.users[key][prop] : '' );
+      },
+
+      _getUserName: function(key)
+      {
+        return(this._getUserProp(key,"displayName"));
+      },
+
+      _getUserPhoto: function(key)
+      {
+        return(this._getUserProp(key,"photoURL"));
+      },
+
+      _getUserSite: function(key)
+      {
+        return(this._getUserProp(key,"site"));
+      },
+
+      _isUserProp: function(key,prop)
+      {
+        return( !!this._getUserProp(key,prop) );
+      }
+
+    };
+
+  }());
+</script>

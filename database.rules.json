@@ -1,36 +1,15 @@
 {
   "rules": {
     ".write": false,
-    "ratings": {
-      ".read": false,
-      ".write": false,
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid"
-      }
-    },
-    "userSessions": {
-      ".read": false,
-      ".write": false,
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid"
-      }
-    },
-    "speakers": {
-      ".read": true,
-      ".write": "root.child('users').child(auth.uid).child('rules').child('speakers').val() === true"
-    },
     "userDetails": {
       ".read": true,
-      ".write": false,
       "$uid": {
         ".write": "auth.uid === $uid"
       }
     },      
     "activities": {
       ".read": true,
-      ".indexOn": "data/public",
+      ".indexOn": [ "data/public", "data/participants" ],
       "$aid": {
         ".write": "(!data.exists() && newData.child('data').child('owner').val() === auth.uid) || data.child('data').child('owner').val() === auth.uid",
         "participants":

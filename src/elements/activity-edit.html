@@ -9,14 +9,13 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
-
 <link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
-
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
-
 <link rel="import" href="../../bower_components/app-datepicker/app-datepicker-dialog.html">
+<link rel="import" href="../elements/compound-timepicker-dialog.html">
 
 <link rel="import" href="../styles/bootstrap-grid.html">
 <link rel="import" href="../styles/dialog-styles.html">
@@ -50,9 +49,15 @@
         line-height: 1.4;
       }
 
+
       paper-radio-group
       {
         --paper-radio-group-item-padding: 5px;
+      }
+
+      paper-checkbox
+      {
+        margin-top: 5px;
       }
 
       paper-radio-button
@@ -91,10 +96,37 @@
       <div slot="content">
         <bootstrap-grid>
           <iron-form id='activityForm'><form>
-            <div class='row'>
-              <paper-input class='col-xs-12' label="Title" type="text" id="title" name="title" value="{{activity.title}}" required auto-validate></paper-input>
-            </div>
-          </form></iron-form>
+            <section>
+              <h3>Common</h3>
+              <div class='row'>
+                <paper-input class='col-xs-12 col-sm-6' label="Title" type="text" value="{{activity.title}}" required auto-validate></paper-input>
+                <paper-input class='col-xs-12 col-sm-6' label="Website" type="text" value="{{activity.site}}" auto-validate pattern="^https?:\/\/.*"></paper-input>
+		<paper-input class='col-xs-12 col-sm-6' label="Suggested date" type="text" value="{{activity.date}}" required auto-validate>
+                  <paper-icon-button suffix icon="calendar-check" on-tap="_showSuggestedDateDlg"></paper-icon-button>
+                </paper-input>
+		<paper-input class='col-xs-12 col-sm-6' label="Suggested time" type="text" value="{{activity.time}}" pattern="^\d\d:\d\d" required auto-validate>
+                  <paper-icon-button suffix icon="schedule" on-tap="_showSuggestedTimeDlg"></paper-icon-button>
+                </paper-input>
+                <paper-textarea class='col-xs-12' label="Description" value="{{activity.description}}" auto-validate char-counter maxlength="1024" required></paper-textarea>
+                <paper-checkbox class='col-xs-12' checked="{{activity.public}}">Make this activity public</paper-checkbox>
+              </div>
+            </section>
+            <section>
+              <h3>Location</h3>
+              <div class='row'>
+                <paper-input class='col-xs-12 col-sm-6' label="Place" type="text" value="{{activity.location}}" required auto-validate></paper-input>
+                <paper-input class='col-xs-12 col-sm-6' label="Google Maps URL" type="text" value="{{activity.map}}" pattern="^https?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/.*" auto-validate></paper-input>
+              </div>
+            </section>
+            <section>
+              <h3>Accessible with</h3>
+              <div class='row'>
+                <paper-checkbox class='col-xs-12 col-sm-4' checked="{{activity.accPrivate}}">Private vehicle</paper-checkbox>
+                <paper-checkbox class='col-xs-12 col-sm-4' checked="{{activity.accPublic}}">Public transportation</paper-checkbox>
+                <paper-checkbox class='col-xs-12 col-sm-4' checked="{{activity.accWalking}}">Walking</paper-checkbox>
+              </div>
+            </section>
+            </form></iron-form>
         </bootstrap-grid>
       </div>
     </paper-scroll-header-panel>
@@ -105,6 +137,27 @@
       path="activities/[[activityId]]"
       data="{{activityRaw}}">
     </firebase-document>
+
+    <app-datepicker-dialog
+      id="suggestedDateDlg" 
+      input-date="[[activity.date]]" 
+      date="{{activity.date}}" 
+      theme="dark-theme" 
+      disable-days="[]"
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation"
+      >
+    </app-datepicker-dialog>
+
+    <compound-timepicker-dialog
+      id="suggestedTimeDlg" 
+      theme="dark-theme"
+      time-format="24"
+      time="{{activity.time}}" 
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation"
+      >
+    </compound-timepicker-dialog>
 
   </template>
 
@@ -143,14 +196,14 @@
           'neon-animation-finish': '_onNeonAnimationFinish'
         },
 
-        ready: function () {
-          var title = this.$.title;
-          addEventListener('paper-header-transform', function (e) {
-            var d = e.detail;
-            var m = d.height - d.condensedHeight;
-            var transform = 40 * (d.y / m > 1 ? 1 : d.y / m);
-            Polymer.Base.translate3d(transform + 'px', 0, 0, title);
-          });
+        _showSuggestedDateDlg: function()
+        {
+          this.$.suggestedDateDlg.open();
+        },
+
+        _showSuggestedTimeDlg: function()
+        {
+          this.$.suggestedTimeDlg.open();
         },
 
         _resetActivityData: function()
