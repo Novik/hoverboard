@@ -1,8 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../elements/truncate-marked-text.html">
 <link rel="import" href="../behaviors/cascaded-behavior.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
+<link rel="import" href="../behaviors/users-behavior.html">
+<link rel="import" href="../behaviors/activity-behavior.html">
 
 <dom-module id="activity-cards">
 
@@ -14,6 +17,11 @@
         --grid-gutter: 8px;
         --colums-number: 3;
         --general: #bdbdbd;
+
+        --truncate-marked-text-style: {
+          font-size: 16px;
+          line-height: 1.5;
+        };
       }
 
       .activities-container {
@@ -100,10 +108,10 @@
 
       .name {
         font-size: 24px;
+        line-height: 24px;
       }
 
       .title {
-        margin-top: -5px;
         display: block;
         font-size: 14px;
       }
@@ -146,10 +154,6 @@
         background: var(--general);
       }
 
-      .markdown-html {
-        font-size: 16px;
-      }
-
       .company-logo {
         margin: 0 auto 10px;
         width: 110px;
@@ -162,7 +166,27 @@
         <div class="activity" cascaded>
           <paper-material class="card">
             <a href$="/activities/[[activity.$key]]/" class="header">
-              <div class="title">[[activity.data.title]] [[activity.$key]]</div>
+             <iron-image src="[[_getActivityImage(activity.data)]]" class="photo placeholder-color" preload fade sizing="cover"></iron-image>
+              <div class="photo-overlay"></div>
+              <div class="bottom-image-text">
+                <span class="name">[[activity.data.title]]</span>
+                <span class="title">[[_getUserName(activity.data.owner)]]</span>
+              </div>
+            </a>
+            <a href$="/activities/[[activity.$key]]/" class="card-content">
+              <div class="tags">
+                <template is="dom-if" if="[[_isActivityProp(activity.data,'site')]]">
+                  <div class="meta"><a href="[[activity.data.site]]" noreferer noopener target="_blank">[[activity.data.location]]</a>, [[activity.data.date]] [[activity.data.time]]</div>
+                </template>
+                <template is="dom-if" if="[[!_isActivityProp(activity.data,'site')]]">
+                  <div class="meta">[[activity.data.location]], [[activity.data.date]] [[activity.data.time]]</div>
+                </template>
+              </div>
+              <truncate-marked-text
+                text="[[activity.data.description]]"
+                words="20"
+                break-last-word
+              ></truncate-marked-text>
             </a>
           </paper-material>
         </div>
@@ -181,6 +205,8 @@
 
         behaviors: [
           HOVERBOARD.CascadedBehavior,
+          HOVERBOARD.UsersBehavior,
+          HOVERBOARD.ActivityBehavior,
           HOVERBOARD.UtilsBehavior
         ],
 

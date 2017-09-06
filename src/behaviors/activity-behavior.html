@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<script>
+  (function () {
+    'use strict';
+
+    /**
+     * @polymerBehavior HOVERBOARD.ActivityBehavior
+     */
+    HOVERBOARD.ActivityBehavior = {
+      properties: 
+      {
+      },
+
+      _getActivityProp: function(data,prop,dflt)
+      {
+        return( data && data[prop] ? data[prop] : (dflt || '') );
+      },
+
+      _isActivityProp: function(data,prop)
+      {
+        return( this._getActivityProp(data,prop,null) || null !== null );
+      },
+
+      _getActivityImage: function(data)
+      {
+        return(this._getActivityProp(data,"image","/images/placeholder.png"));
+      },
+
+      _isActivityFree: function(data)
+      {
+        return( (this._getActivityProp(data,"money") !== 'payment') || (parseInt(this._getActivityProp(data,"price",0)) <= 0) );
+      },
+
+      _isPaymentTo: function(data,value)
+      {
+        return(this._getActivityProp(data,"paymentMethod") === value);
+      },
+
+      _isMapPresent: function(data)
+      {
+        return(this._makeEmbedURL(data,"mapURL") != null);
+      },
+
+      _makeEmbedURL: function(data)
+      {
+        if(data && data.mapURL)
+        {
+          var coords = data.mapURL.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.?\d?)+z/);
+          if( coords && coords.length==4 )
+          {
+  	    var place = data.mapURL.match(/^https?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/place\/([^\/]*)/);
+	    if( place.length==4 )
+	    {
+	      return( "https://www.google.com/maps/embed/v1/place?key={$ googlemaps.apiKey $}&q="+place[3]+"&center="+coords[1]+","+coords[2]+"&zoom="+coords[3] );
+	    }
+          }
+        }
+        return(null);
+      },
+
+      _getActivityCheckedState: function(data,prop)
+      {
+         return(this._getActivityProp(data,prop,false) ? 'checked' : 'unchecked');
+      },
+
+    };
+
+  }());
+</script>

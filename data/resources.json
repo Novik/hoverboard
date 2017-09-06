@@ -69,6 +69,7 @@
   "removedFromSubscription": "Removed from My Activities",
   "addedToSubscription": "Added to My Activities",
   "activityWasRemoved": "Activity was removed successfuly",
+  "updateInProgress": "Update in progress...",
   "footerBlocks": 
   [
     {

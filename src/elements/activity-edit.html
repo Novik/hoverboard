@@ -21,6 +21,7 @@
 <link rel="import" href="../styles/dialog-styles.html">
 <link rel="import" href="../styles/shared-styles.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
+<link rel="import" href="../behaviors/activity-behavior.html">
 
 <dom-module id="activity-edit">
 
@@ -48,7 +49,6 @@
       {
         line-height: 1.4;
       }
-
 
       paper-radio-group
       {
@@ -81,6 +81,13 @@
         display: block;
         padding: 5px 0;
       }
+
+      iron-image.activity-img
+      {
+        width: 100%;
+        height: 192px;
+        cursor: pointer;
+      }
     </style>
 
     <paper-scroll-header-panel id="scrollHeaderPanel" condenses="{{app.isPhoneSize}}" no-reveal="{{!app.isPhoneSize}}" fixed>
@@ -101,30 +108,53 @@
               <div class='row'>
                 <paper-input class='col-xs-12 col-sm-6' label="Title" type="text" value="{{activity.title}}" required auto-validate></paper-input>
                 <paper-input class='col-xs-12 col-sm-6' label="Website" type="text" value="{{activity.site}}" auto-validate pattern="^https?:\/\/.*"></paper-input>
-		<paper-input class='col-xs-12 col-sm-6' label="Suggested date" type="text" value="{{activity.date}}" required auto-validate>
+		<paper-input class='col-xs-12 col-sm-6' label="Suggested date" type="text" value="{{activity.date}}"pattern="^[0-9]{4}/(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])$" required auto-validate>
                   <paper-icon-button suffix icon="calendar-check" on-tap="_showSuggestedDateDlg"></paper-icon-button>
                 </paper-input>
-		<paper-input class='col-xs-12 col-sm-6' label="Suggested time" type="text" value="{{activity.time}}" pattern="^\d\d:\d\d" required auto-validate>
+		<paper-input class='col-xs-12 col-sm-6' label="Suggested time" type="text" value="{{activity.time}}" pattern="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]" required auto-validate>
                   <paper-icon-button suffix icon="schedule" on-tap="_showSuggestedTimeDlg"></paper-icon-button>
                 </paper-input>
                 <paper-textarea class='col-xs-12' label="Description" value="{{activity.description}}" auto-validate char-counter maxlength="1024" required></paper-textarea>
-                <paper-checkbox class='col-xs-12' checked="{{activity.public}}">Make this activity public</paper-checkbox>
+                <paper-input class='col-xs-12' label="Image" type="file" id="filepicker" accept="image/*, .png, .jpg, .jpeg"></paper-input>
+                <div class="image-wrapper col-xs-12" layout horizontal on-tap="_onPreviewClick">
+                  <iron-image
+                    id="activityImg"
+                    class="activity-img"
+                    src="[[previewImg]]"
+                    sizing="cover"
+                  ></iron-image>
+                </div>
+                <paper-checkbox noink class='col-xs-12' checked="{{activity.public}}">Make this activity public</paper-checkbox>
               </div>
             </section>
             <section>
               <h3>Location</h3>
               <div class='row'>
                 <paper-input class='col-xs-12 col-sm-6' label="Place" type="text" value="{{activity.location}}" required auto-validate></paper-input>
-                <paper-input class='col-xs-12 col-sm-6' label="Google Maps URL" type="text" value="{{activity.map}}" pattern="^https?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/.*" auto-validate></paper-input>
+                <paper-input class='col-xs-12 col-sm-6' label="Google Maps URL" type="text" value="{{activity.mapURL}}" pattern="^https?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/place\/.*" auto-validate></paper-input>
               </div>
             </section>
             <section>
               <h3>Accessible with</h3>
               <div class='row'>
-                <paper-checkbox class='col-xs-12 col-sm-4' checked="{{activity.accPrivate}}">Private vehicle</paper-checkbox>
-                <paper-checkbox class='col-xs-12 col-sm-4' checked="{{activity.accPublic}}">Public transportation</paper-checkbox>
-                <paper-checkbox class='col-xs-12 col-sm-4' checked="{{activity.accWalking}}">Walking</paper-checkbox>
+                <paper-checkbox noink class='col-xs-12 col-sm-4' checked="{{activity.accPrivate}}">Private vehicle</paper-checkbox>
+                <paper-checkbox noink class='col-xs-12 col-sm-4' checked="{{activity.accPublic}}">Public transportation</paper-checkbox>
+                <paper-checkbox noink class='col-xs-12 col-sm-4' checked="{{activity.accWalking}}">Walking</paper-checkbox>
               </div>
+            </section>
+            <section>
+              <h3>Money</h3>
+              <paper-radio-group selected="{{activity.money}}" layout vertical left>
+                <paper-radio-button noink name="free">No payment required</paper-radio-button>
+                <paper-radio-button noink name="payment"><paper-input no-label-float label="Price, $" type="text" value="{{activity.price}}" auto-validate pattern="[0-9]*"></paper-input></paper-radio-button>
+              </paper-radio-group>
+              <ul>
+              <paper-radio-group selected="{{activity.paymentMethod}}" layout vertical left id="payment-block" hidden="[[_isFreeSelected(activity.money)]]">
+                <paper-radio-button noink name="organizer">Pay to organizer&nbsp;&nbsp;&nbsp;<paper-input no-label-float label="Note" type="text" value="{{activity.payNote}}" auto-validate></paper-input></paper-radio-button>
+                <paper-radio-button noink name="online">Order your ticket online at this website&nbsp;&nbsp;&nbsp;<paper-input no-label-float label="Website" type="text" value="{{activity.paySite}}" auto-validate pattern="^https?:\/\/.*"></paper-input></paper-radio-button>
+                <paper-radio-button noink name="venue">Buy ticket at venue upon arrival</paper-radio-button>
+              </paper-radio-group>
+              </ul>
             </section>
             </form></iron-form>
         </bootstrap-grid>
@@ -140,7 +170,8 @@
 
     <app-datepicker-dialog
       id="suggestedDateDlg" 
-      input-date="[[activity.date]]" 
+      auto-update-date="true"
+      input-date="{{activity.date}}" 
       date="{{activity.date}}" 
       theme="dark-theme" 
       disable-days="[]"
@@ -179,6 +210,11 @@
               data: {},
               participants: {}
             }
+          },
+
+          previewImg: {
+            type: String,
+            value: null
           }
         },
 
@@ -189,11 +225,46 @@
         behaviors: [
           Polymer.PaperDialogBehavior,
           Polymer.NeonAnimationRunnerBehavior,
+          HOVERBOARD.ActivityBehavior,
           HOVERBOARD.UtilsBehavior
         ],
 
         listeners: {
           'neon-animation-finish': '_onNeonAnimationFinish'
+        },
+
+        ready: function()
+        {
+          this.$.filepicker.addEventListener('change', this._onImageChange.bind(this));
+        },
+
+        _onPreviewClick: function()
+        {
+          this.$.filepicker.inputElement.click();
+        },
+
+        _onImageChange: function()
+        {
+	  var file = this.$.filepicker.inputElement.files[0];
+	  if(file)
+	  {
+            var reader = new FileReader();
+	    reader.onload = (e) =>
+	    {
+	      this.previewImg = e.target.result;
+	    };
+	    reader.readAsDataURL(file);
+	  }
+        },
+
+        _isFreeSelected: function(method)
+        {
+          return(method=='free');
+        },
+
+        _togglePaymentBlock: function(e)
+        {
+          console.log(e);
         },
 
         _showSuggestedDateDlg: function()
@@ -208,7 +279,12 @@
 
         _resetActivityData: function()
         {
-           this.activity = Object.assign( {}, this.activityRaw.data );
+           this.$.filepicker.inputElement.value = '';
+           this.activity = Object.assign( 
+           {
+             money: 'free'
+           }, this.activityRaw.data );
+           this.previewImg = this._getActivityImage(this.activity);
         },
 
         _dismissActivity: function() 
@@ -219,6 +295,19 @@
           }
         },
 
+        _uploadData: function(updates,notification)
+        {
+          firebase.app("{$ firebase.name $}").database().ref("/activities/"+this.activityId).update( updates ).then(() =>
+          {
+            this.locked = false;
+            HOVERBOARD.Elements.Template.$.toast.showMessage(notification);              
+          }).catch(error => 
+          {
+            this.locked = false;
+            HOVERBOARD.Elements.Template.$.toast.showMessage(error.message);
+          });
+        },
+
         _updateActivity: function() 
         {
           if( this.$.activityForm.validate() )
@@ -227,6 +316,7 @@
   	    this.close();
   	    if( (this.app.user.uid==this.activity.owner) || this._isNewActivity() )
   	    {
+  	      HOVERBOARD.Elements.Template.$.toast.showMessage("{$ updateInProgress $}",null,null,null,-1);
   	      var notification = this._getActivityNotification();
   	      var updates = {};
   	      updates["data"] = Object.assign({},this.activity);
@@ -236,12 +326,26 @@
     	        updates["participants/"+this.app.user.uid+"/signed"] = true;
   	        this.activityId = firebase.app("{$ firebase.name $}").database().ref().child('activities').push().key;
   	      }
-              firebase.app("{$ firebase.name $}").database().ref("/activities/"+this.activityId).update( updates ).then(() =>
+              var file = this.$.filepicker.inputElement.files[0];
+              if(file && file.type.match('image\/.*'))
               {
-                HOVERBOARD.Elements.Template.$.toast.showMessage(notification);
-              });
+                var extension = file.name.split('.').pop().toLowerCase();
+                var uploadTask = firebase.app("{$ firebase.name $}").storage().ref().child('activities/images/'+this.activityId+"."+extension).
+                  put(file, { contentType: file.type } );
+                uploadTask.on( firebase.storage.TaskEvent.STATE_CHANGED, null, function(error)
+                {
+                  HOVERBOARD.Elements.Template.$.toast.showMessage(error.message);
+                }, () =>
+                {
+                  updates["data"].image = uploadTask.snapshot.downloadURL;
+                  this._uploadData(updates,notification);
+                });
+             }
+             else
+             {
+               this._uploadData(updates,notification);
+             }
             }
-            this.locked = false;
           }
         },
 
@@ -265,10 +369,10 @@
 
         _onNeonAnimationFinish: function () {
           if (this.opened) {
-            Polymer.IronDropdownScrollManager.pushScrollLock(this.$.scrollHeaderPanel);
+//            Polymer.IronDropdownScrollManager.pushScrollLock(this.$.scrollHeaderPanel);
             this._finishRenderOpened();
           } else {
-            Polymer.IronDropdownScrollManager.removeScrollLock(this.$.scrollHeaderPanel);
+//            Polymer.IronDropdownScrollManager.removeScrollLock(this.$.scrollHeaderPanel);
             this._finishRenderClosed();
           }
         },
