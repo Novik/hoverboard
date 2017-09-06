@@ -329,8 +329,7 @@
               var file = this.$.filepicker.inputElement.files[0];
               if(file && file.type.match('image\/.*'))
               {
-                var extension = file.name.split('.').pop().toLowerCase();
-                var uploadTask = firebase.app("{$ firebase.name $}").storage().ref().child('activities/images/'+this.activityId+"."+extension).
+                var uploadTask = firebase.app("{$ firebase.name $}").storage().ref().child('activities/images/'+this.activityId).
                   put(file, { contentType: file.type } );
                 uploadTask.on( firebase.storage.TaskEvent.STATE_CHANGED, null, function(error)
                 {

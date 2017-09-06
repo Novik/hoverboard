@@ -26,3 +26,8 @@ exports.updateParticipantsCount = functions.database.ref('/activities/{activityI
 			}));
 	}
 });
+
+exports.deleteActivityAssets = functions.database.ref('/activities/{activityId}').onDelete(event => 
+{
+	return( admin.storage().ref().child('activities/images/'+this.activityId).delete() );	
+});

@@ -175,6 +175,7 @@
         </a>
        </paper-toolbar>
       <div class="content">
+        <template is="dom-if" if="[[_isEnabledActivity(app.user,activity)]]">
         <div class="avatar-wrapper" layout horizontal>
           <iron-image
             class="avatar-img"
@@ -197,7 +198,7 @@
               disabled$="[[!online]]"
             ></paper-fab>
           </template>
-          <template is="dom-if" if="[[!_isOwner(app.user,activity)]]">
+          <template is="dom-if" if="[[_maySubscribe(app.user,activity)]]">
             <paper-fab
               class$="float-button sign-button [[_getSubscribedClass(app.user,activity)]]"
               icon="[[_getSubscribedClass(app.user,activity)]]"
@@ -267,6 +268,7 @@
             </div>
           </div>
         </section>
+        </template>
       </div>
     </paper-scroll-header-panel>
 
@@ -319,6 +321,13 @@
           return( this.activity.data && 
             this.app.user &&
             this.activity.data.owner == this.app.user.uid );
+        },
+
+        _maySubscribe: function()
+        {
+          return( this.activity.data && 
+            this.app.user && 
+            !this._isOwner() );
         },
 
         _getSubscribedClass: function()
@@ -378,7 +387,7 @@
 
         _isEnabledActivity: function()
         {
-          return(this.activityRaw && (this.app.user || this.activityRaw.data.public));
+          return(this.activityRaw && (this.app.user || (this.activityRaw.data && this.activityRaw.data.public)));
         },
 
         _renderOpened: function () {
