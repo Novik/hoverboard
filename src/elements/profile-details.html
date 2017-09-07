@@ -173,15 +173,8 @@
       id="userDetails"
       app-name="{$ firebase.name $}"
       path="{$ firebase.userDetailsPath $}/[[app.user.uid]]"
-      data="{{_userPersistedData}}">
+      data="{{userPersistedData}}">
     </firebase-document>
-
-    <app-indexeddb-mirror
-      session="{$ firebase.indexedDbSession $}[[app.user.id]]"
-      key="userDetails"
-      data="{{_userPersistedData}}"
-      persisted-data="{{userPersistedData}}">
-    </app-indexeddb-mirror>
 
   </template>
 
