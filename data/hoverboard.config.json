@@ -23,7 +23,6 @@
     "userSessionsPath": "/userSessions",
     "ratingsPath": "/ratings",
     "userDetailsPath": "/userDetails",
-    "userMarkersPath": "/userMarkers",
     "indexedDbSession": "hoverboard"
   },
   "mailchimp": {

@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown-scroll-manager.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
@@ -85,7 +86,7 @@
         </a>
         <div id="title" class="top title toolbar-title">Profile</div>
         <div class="action-button-wrapper" layout horizontal end-justified>
-          <paper-button class="primary" raised on-tap="_updateProfile" type="submit">Update</paper-button>
+          <paper-button class="primary" raised on-tap="_updateProfile" disabled$="[[!online]]">Update</paper-button>
         </div>
       </paper-toolbar>
       <div slot="content">
@@ -210,6 +211,7 @@
         behaviors: [
           Polymer.PaperDialogBehavior,
           Polymer.NeonAnimationRunnerBehavior,
+          Polymer.AppNetworkStatusBehavior,
           HOVERBOARD.UtilsBehavior
         ],
 
@@ -293,10 +295,10 @@
 
         _onNeonAnimationFinish: function () {
           if (this.opened) {
-            Polymer.IronDropdownScrollManager.pushScrollLock(this.$.scrollHeaderPanel);
+            document.body.style.overflow = 'hidden';
             this._finishRenderOpened();
           } else {
-            Polymer.IronDropdownScrollManager.removeScrollLock(this.$.scrollHeaderPanel);
+            document.body.style.overflow = '';
             this._finishRenderClosed();
           }
         }

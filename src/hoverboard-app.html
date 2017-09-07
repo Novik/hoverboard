@@ -24,7 +24,6 @@
 <link rel="import" href="elements/drawer-block.html">
 <link rel="import" href="elements/toolbar-block.html">
 <link rel="import" href="elements/header-content.html">
-<link rel="import" href="elements/video-dialog.html">
 <link rel="import" href="elements/toast-element.html">
 <link rel="import" href="elements/profile-details.html">
 
@@ -176,9 +175,7 @@
 
           <home-page name="home"
                      app="{{app}}"
-                     people="{{speakers}}"
-                     posts="{{posts}}"
-                     videos="{{videos}}"></home-page>
+                     people="{{speakers}}"></home-page>
 
           <activities-page name="activities"
                      app="{{app}}"
@@ -189,13 +186,6 @@
       </div>
 
     </app-drawer-layout>
-
-    <video-dialog id="videoDialog"
-                  video-title="[[video.title]]"
-                  youtube-id="[[video.youtubeId]]"
-                  entry-animation="scale-up-animation"
-                  exit-animation="fade-out-animation"
-                  disable-controls="[[!video.disableControls]]"></video-dialog>
 
     <toast-element id="toast" app="{{app}}"></toast-element>
 
@@ -335,15 +325,6 @@
               this.$$('#drawer').close();
             }.bind(this));
           }
-        },
-
-        openVideo: function (title, youtubeId, disableControls) {
-          this.video = {
-            title: title,
-            youtubeId: youtubeId,
-            disableControls: disableControls
-          };
-          this.$.videoDialog.open();
         },
 
         signIn: function () {

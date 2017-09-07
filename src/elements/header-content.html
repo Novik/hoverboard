@@ -132,15 +132,6 @@
                           alt="GDG DevFest Ukraine 2016"></iron-image>
               <h3 class="dates">{$ dates $}</h3>
               <h2 class="motto">{$ motto $}</h2>
-              {% if pages.home.headerSettings.video %}
-                <div class="open-video" on-tap="_openVideo">
-                  <iron-icon icon="play"></iron-icon>
-                  {$ playIcon $}
-                </div>
-              {% endif %}
-              <div class="action-buttons">
-                <paper-button class="primary" on-tap="_scrollToTickets" raised>{$ buyTicket $}</paper-button>
-              </div>
             </div>
           </div>
         </animatable-content>
@@ -160,26 +151,7 @@
         properties: {
           app: {
             type: Object
-          },
-          schedule: Array,
-          selectedDay: {
-            type: Number,
-            notify: true,
-            value: 0
           }
-        },
-
-        _openVideo: function () {
-          HOVERBOARD.Elements.Template.openVideo('{$ pages.home.headerSettings.video.title $}',
-            '{$ pages.home.headerSettings.video.youtubeId $}', true);
-        },
-
-        _scrollToTickets: function () {
-          Polymer.AppLayout.scroll({
-            top: HOVERBOARD.Elements.Tickets.getBoundingClientRect().top,
-            behavior: 'smooth',
-            target: HOVERBOARD.Elements.Scroller
-          });
         }
 
       });
