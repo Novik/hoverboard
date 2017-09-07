@@ -2,14 +2,14 @@
 
 <link rel="import" href="../behaviors/cascaded-behavior.html">
 <link rel="import" href="../behaviors/page-behavior.html">
-<link rel="import" href="../elements/featured-people.html">
+<link rel="import" href="../elements/featured-activities.html">
 <link rel="import" href="../elements/footer-block.html">
 
 <dom-module id="home-page">
 
   <template>
 
-    <featured-people app="{{app}}" people="{{people}}" cascaded></featured-people>
+    <featured-activities app="{{app}}" cascaded></featured-activities>
     <footer-block app="{{app}}" cascaded></footer-block>
 
   </template>
@@ -26,12 +26,6 @@
           HOVERBOARD.PageBehavior,
           HOVERBOARD.CascadedBehavior
         ],
-
-        properties: {
-          people: {
-            type: Array
-          }
-        },
 
         ready: function() {
           this.updateCascadedNodes();

@@ -25,8 +25,6 @@
   "becomePartner": "Become a partner",
   "featuredVideosTitle": "Featured #DFUA '15 Sessions",
   "featuredVideosViewAll": "View all videos",
-  "featuredPeopleTitle": "Rockstar Speakers",
-  "featuredPeopleViewAll": "View all speakers",
   "action": "See how it was",
   "locationTitle": "Pivdennyi Expo Center",
   "locationDescription": "Newly built Pivdennyi Expo is a long-awaited exhibition center in Lviv, which can fulfill the needs of the large-scale event",
@@ -70,6 +68,8 @@
   "addedToSubscription": "Added to My Activities",
   "activityWasRemoved": "Activity was removed successfuly",
   "updateInProgress": "Update in progress...",
+  "featuredActivitiesTitle": "Rockstar Activities",
+  "featuredActivitiesViewAll": "View all activities",
   "footerBlocks": 
   [
     {

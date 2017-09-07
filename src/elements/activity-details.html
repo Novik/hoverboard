@@ -157,8 +157,15 @@
       id="activity"
       app-name="{$ firebase.name $}"
       path="/activities/[[activityId]]"
-      data="{{activityRaw}}">
+      data="{{_activityRaw}}">
     </firebase-document>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="activityDetails"
+      data="{{_activityRaw}}"
+      persisted-data="{{activityRaw}}">
+    </app-indexeddb-mirror>
 
     <activity-edit id="activityEdit"
       app="{{app}}"

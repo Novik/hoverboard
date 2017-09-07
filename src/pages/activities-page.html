@@ -79,26 +79,47 @@
     </style>
 
     <firebase-query
-      id="all_activities"
+      id="allActivities"
       app-name="{$ firebase.name $}"
       path="/activities"
-      data="{{allActivities}}"></firebase-query>
+      data="{{_allActivities}}"></firebase-query>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="allActivities"
+      data="{{_allActivities}}"
+      persisted-data="{{allActivities}}">
+    </app-indexeddb-mirror>
 
     <firebase-query
-      id="public_activities"
+      id="publicActivities"
       app-name="{$ firebase.name $}"
       path="/activities"
-      data="{{publicActivities}}"
+      data="{{_publicActivities}}"
       order-by-child="data/public"
       equal-to="true"></firebase-query>
 
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="publicActivities"
+      data="{{_publicActivities}}"
+      persisted-data="{{publicActivities}}">
+    </app-indexeddb-mirror>
+
     <firebase-query
-      id="my_activities"
+      id="myActivities"
       app-name="{$ firebase.name $}"
       path="/activities"
       order-by-child="participants/[[app.user.uid]]/signed"
       equal-to="true"
-      data="{{myActivities}}"></firebase-query>
+      data="{{_myActivities}}"></firebase-query>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="myActivities"
+      data="{{_myActivities}}"
+      persisted-data="{{myActivities}}">
+    </app-indexeddb-mirror>
 
     <activity-details id="activityDetails"
                      app="{{app}}"

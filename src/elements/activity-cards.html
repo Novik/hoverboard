@@ -33,6 +33,12 @@
         @apply(--layout-wrap);
       }
 
+      .activities-container[zeropadding]
+      {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
       .activity {
         @apply(--layout-horizontal);
         width: 100%;
@@ -172,7 +178,7 @@
       }
     </style>
 
-    <div class="container activities-container">
+    <div class="container activities-container" zeropadding$="[[zeroPadding]]">
       <template is="dom-repeat" items="[[activities]]" as="activity" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}">
         <div class="activity" cascaded>
           <paper-material class="card">
@@ -234,15 +240,15 @@
         ],
 
         properties: {
+          zeroPadding: {
+            type: Boolean,
+            value: false
+          },
+
           renderedCount: {
             type: Number,
             value: 0
           }
-        },
-
-        _isSigned: function(user)
-        {
-          return(user.value['signed']);
         }
 
       });

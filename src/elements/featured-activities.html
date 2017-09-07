@@ -4,12 +4,13 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../elements/activity-cards.html">
 
 <link rel="import" href="../styles/shared-styles.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
 
 
-<dom-module id="featured-people">
+<dom-module id="featured-activities">
 
   <template>
 
@@ -87,33 +88,50 @@
           @apply(--layout-flex);
         }
       }
+
+      .bottom-container
+      {
+        padding-top: 0;
+      }
+
+      .top-container
+      {
+        padding-bottom: 0;
+      }
+
+      activities-container:
+      {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
     </style>
 
-    <div class="container">
-      <h4 class="heading">{$ featuredPeopleTitle $}</h4>
-      <div class="people-wrapper">
-        <template is="dom-repeat" items="[[featuredPeople]]" as="person">
-          <a href$="/speakers/[[person.id]]" class="person">
-            <iron-image
-              class="photo"
-              src="[[person.photoUrl]]"
-              sizing="cover"
-            ></iron-image>
-            <iron-image
-              class="company-logo"
-              src="[[person.companyLogo]]"
-              sizing="contain"
-            ></iron-image>
-            <h4 class="name">[[person.name]]</h4>
-            <span class="company">[[person.country]]</span>
-          </a>
-        </template>
-      </div>
-      <div>
-        <a href="/speakers" class="block-link">
-          <paper-button>{$ featuredPeopleViewAll $}</paper-button>
-        </a>
-      </div>
+    <firebase-query
+      id="allFeaturedActivities"
+      app-name="{$ firebase.name $}"
+      path="/activities"
+      order-by-child="data/participants"
+      limit-to-last="3"
+      data="{{_allFeaturedActivities}}"></firebase-query>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="allFeaturedActivities"
+      data="{{_allFeaturedActivities}}"
+      persisted-data="{{allFeaturedActivities}}">
+    </app-indexeddb-mirror>
+
+    <div class="container top-container">
+      <h4 class="heading">{$ featuredActivitiesTitle $}</h4>
+    </div>
+
+    <activity-cards activities="[[allFeaturedActivities]]" app="{{app}}" zero-padding></activity-cards>
+
+    <div class="container bottom-container">
+      <a href="/activities" class="block-link">
+        <paper-button>{$ featuredActivitiesViewAll $}</paper-button>
+      </a>
     </div>
 
   </template>
@@ -124,29 +142,11 @@
 
       Polymer({
 
-        is: 'featured-people',
+        is: 'featured-activities',
 
         behaviors: [
           HOVERBOARD.UtilsBehavior
-        ],
-
-        properties: {
-          people: {
-            type: Array,
-            observer: '_peopleChanged'
-          }
-        },
-
-        _peopleChanged: function () {
-          var people = this._toArray(this.people),
-            filteredPeople = [];
-          for (var i = 0, length = people.length; i < length; i++) {
-            if (people[i].featured) {
-              filteredPeople.push(people[i]);
-            }
-          }
-          this.featuredPeople = this._randomOrder(filteredPeople).slice(0, 4);
-        }
+        ]
 
       });
 

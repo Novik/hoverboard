@@ -166,8 +166,15 @@
       id="activityEdit"
       app-name="{$ firebase.name $}"
       path="activities/[[activityId]]"
-      data="{{activityRaw}}">
+      data="{{_activityRaw}}">
     </firebase-document>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="activityEdit"
+      data="{{_activityRaw}}"
+      persisted-data="{{activityRaw}}">
+    </app-indexeddb-mirror>
 
     <app-datepicker-dialog
       id="suggestedDateDlg" 
@@ -321,8 +328,14 @@
   	      {
   	        updates.data.owner = this.app.user.uid;
     	        updates["participants/"+this.app.user.uid+"/signed"] = true;
+    	        updates["data"].created_at = firebase.database.ServerValue.TIMESTAMP;
   	        this.activityId = firebase.app("{$ firebase.name $}").database().ref().child('activities').push().key;
   	      }
+  	      else
+  	      {
+    	        updates["data"].updated_at = firebase.database.ServerValue.TIMESTAMP;
+  	      }
+              updates["data"].scheduled_at = (new Date( this.activity.date.replace(/\//g,'-')+'T'+this.activity.time+':00')).getTime();
               var file = this.$.filepicker.inputElement.files[0];
               if(file && file.type.match('image\/.*'))
               {
