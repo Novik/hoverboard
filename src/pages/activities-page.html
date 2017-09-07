@@ -188,7 +188,8 @@
 
           _selectedActivity: {
             type: String,
-            notify: true
+            notify: true,
+            value: ''
           }
         },
 
@@ -196,15 +197,19 @@
           '_routePageChanged(routeData.activityId)'
         ],
 
-        listeners: {
-          'iron-overlay-closed': '_resetActivityIdParam'
+        ready: function()
+        {
+          this.$.activityDetails.addEventListener('details-closed', (e)=> 
+          {
+            this.set('routeData.activityId', '');
+          });
         },
 
         _onAddActivity: function()
         {
+          this._selectedActivity = '';
           window.requestAnimationFrame(function() 
           {
-            this._selectedActivity = null;
             this.$.activityEdit.open();
           }.bind(this));
         },
@@ -221,29 +226,20 @@
 
         _routePageChanged: function(activityId) 
         {
-          if(this.selected)
+          if(this.selected && (this._selectedActivity != activityId))
           {
+            this._selectedActivity = activityId;
             if(activityId) 
             {
                 window.requestAnimationFrame(function() 
                 {
-                  this._selectedActivity = activityId;
                   this.$.activityDetails.open();
                 }.bind(this));
             }
             else
             {
-               this._selectedActivity = null;
                this.$.activityDetails.close();
             }
-          }
-        },
-
-        _resetActivityIdParam: function(e) 
-        {
-          if(e.path.length && e.path[0]==this.$.activityDetails)
-          {
-            this.set('routeData.activityId', null);
           }
         },
 

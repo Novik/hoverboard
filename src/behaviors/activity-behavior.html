@@ -40,7 +40,7 @@
 
       _isMapPresent: function(data)
       {
-        return(this._makeEmbedURL(data,"mapURL") != null);
+        return(!!this._makeEmbedURL(data,"mapURL"));
       },
 
       _makeEmbedURL: function(data)
@@ -57,7 +57,7 @@
 	    }
           }
         }
-        return(null);
+        return('');
       },
 
       _getActivityCheckedState: function(data,prop)

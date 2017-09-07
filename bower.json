@@ -45,7 +45,9 @@
     "time-elements": "github/time-elements#^0.6.0",
     "app-datepicker": "^2.11.1",
     "paper-radio-button": "PolymerElements/paper-radio-button#^2.0.0",
-    "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0"
+    "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0",
+    "paper-badge": "PolymerElements/paper-badge#^2.0.0",
+    "compound-timepicker": "^0.5.1"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^4.3.0"

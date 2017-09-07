@@ -262,11 +262,6 @@
           return(method=='free');
         },
 
-        _togglePaymentBlock: function(e)
-        {
-          console.log(e);
-        },
-
         _showSuggestedDateDlg: function()
         {
           this.$.suggestedDateDlg.open();
@@ -279,20 +274,20 @@
 
         _resetActivityData: function()
         {
-           this.$.filepicker.inputElement.value = '';
-           this.activity = Object.assign( 
+           if(!this.locked)
            {
-             money: 'free'
-           }, this.activityRaw.data );
-           this.previewImg = this._getActivityImage(this.activity);
-        },
-
-        _dismissActivity: function() 
-        {
-          if(!this.locked)
-          {
-            this._resetActivityData();
-          }
+             this.$.filepicker.inputElement.value = '';
+             this.activity = Object.assign( 
+             {
+               money: 'free',
+               paymentMethod: 'venue',
+               public: false,
+               accPrivate: false,
+               accWalking: false,
+               accPublic: false
+             }, this.activityRaw.data );
+             this.previewImg = this._getActivityImage(this.activity);
+           }
         },
 
         _uploadData: function(updates,notification)
@@ -360,7 +355,7 @@
         },
 
         _renderClosed: function () {
-          this._dismissActivity();
+          this._resetActivityData();
           HOVERBOARD.Util.setMetaThemeColor(this._previousBrowserColor);
           this.backdropElement.close();
           this.playAnimation('exit');

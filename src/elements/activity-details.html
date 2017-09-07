@@ -370,6 +370,7 @@
 
         _onDeleteActivity: function()
         {
+          firebase.app("{$ firebase.name $}").storage().ref().child('activities/images/'+this.activityId).delete().catch((error) => {});
           firebase.app("{$ firebase.name $}").database().ref("activities/"+this.activityId).remove().then(() =>
           {
             this.close();
@@ -406,6 +407,7 @@
           HOVERBOARD.Util.setMetaThemeColor(this._previousBrowserColor);
           this.backdropElement.close();
           this.playAnimation('exit');
+          this.dispatchEvent(new CustomEvent('details-closed'));
         },
 
         _onNeonAnimationFinish: function (e) {

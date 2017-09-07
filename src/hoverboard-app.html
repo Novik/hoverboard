@@ -122,10 +122,6 @@
 
     <app-data
       app="{{app}}"
-      speakers="{{speakers}}"
-      sessions="{{sessions}}"
-      schedule="{{schedule}}"
-      posts="{{posts}}"
     ></app-data>
 
     <firebase-auth
@@ -273,15 +269,17 @@
         _routePageChanged: function (page) {
           // Scroll to the top of the page on every *route* change. Use `Polymer.AppLayout.scroll`
           // with `behavior: 'silent'` to disable header scroll effects during the scroll.
-          if (this.app.page !== page) {
+          page = (page || 'home');
+          if(this.app.page !== page) 
+          {
             Polymer.AppLayout.scroll({top: 0, behavior: 'silent'});
-          }
-          this.set('app.page', (page || 'home'));
+            this.set('app.page', page);
           // Close the drawer - in case the *route* change came from a link in the drawer.
-          this.drawerOpened = false;
-          var navObject = this.pages[this.app.page];
-          if (navObject && navObject.headerSettings) {
-            this.set('app.headerSettings', navObject.headerSettings);
+            this.drawerOpened = false;
+            var navObject = this.pages[this.app.page];
+            if (navObject && navObject.headerSettings) {
+              this.set('app.headerSettings', navObject.headerSettings);
+            }
           }
         },
 
@@ -303,7 +301,9 @@
         },
 
         _pageChanged: function (page) {
-          if (page && page !== 'home') {
+          if (page && page !== 'home'
+//            && page !== 'null'
+            ) {
             this.importHref(this.resolveUrl('pages/' + page + '-page.html'), null, null, true);
           }
         },

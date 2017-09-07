@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 <link rel="import" href="../elements/truncate-marked-text.html">
 <link rel="import" href="../behaviors/cascaded-behavior.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
@@ -22,6 +23,9 @@
           font-size: 16px;
           line-height: 1.5;
         };
+
+        --paper-badge-margin-left: -20px;
+        --paper-badge-margin-bottom: -10px;
       }
 
       .activities-container {
@@ -159,10 +163,17 @@
         width: 110px;
         height: 25px;
       }
+
+      .participants
+      {
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 22px;
+      }
     </style>
 
     <div class="container activities-container">
-      <template is="dom-repeat" items="[[activities]]" as="activity" on-dom-change="updateCascadedNodes">
+      <template is="dom-repeat" items="[[activities]]" as="activity" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}">
         <div class="activity" cascaded>
           <paper-material class="card">
             <a href$="/activities/[[activity.$key]]/" class="header">
@@ -176,10 +187,19 @@
             <a href$="/activities/[[activity.$key]]/" class="card-content">
               <div class="tags">
                 <template is="dom-if" if="[[_isActivityProp(activity.data,'site')]]">
-                  <div class="meta"><a href="[[activity.data.site]]" noreferer noopener target="_blank">[[activity.data.location]]</a>, [[activity.data.date]] [[activity.data.time]]</div>
+                  <div class="meta">
+                    <a href="[[activity.data.site]]" noreferer noopener target="_blank">[[activity.data.location]]</a>, 
+                    [[activity.data.date]] [[activity.data.time]]
+                    <paper-icon-button id="participants-1" class="participants" icon="person-pin" alt="participants"></paper-icon-button>
+                    <paper-badge for="participants-1" label="[[activity.data.participants]]"></paper-badge>
+                  </div>
                 </template>
                 <template is="dom-if" if="[[!_isActivityProp(activity.data,'site')]]">
-                  <div class="meta">[[activity.data.location]], [[activity.data.date]] [[activity.data.time]]</div>
+                  <div class="meta">
+                    [[activity.data.location]], [[activity.data.date]] [[activity.data.time]]
+                    <paper-icon-button id="participants-2" class="participants" icon="person-pin" alt="participants"></paper-icon-button>
+                    <paper-badge for="participants-2" label="[[activity.data.participants]]"></paper-badge>
+                  </div>
                 </template>
               </div>
               <truncate-marked-text
@@ -190,6 +210,9 @@
             </a>
           </paper-material>
         </div>
+      </template>
+      <template is="dom-if" if="{{!renderedCount}}">
+        No activities available yet.
       </template>
     </div>
 
@@ -209,6 +232,13 @@
           HOVERBOARD.ActivityBehavior,
           HOVERBOARD.UtilsBehavior
         ],
+
+        properties: {
+          renderedCount: {
+            type: Number,
+            value: 0
+          }
+        },
 
         _isSigned: function(user)
         {
