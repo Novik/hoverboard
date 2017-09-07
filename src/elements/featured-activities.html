@@ -15,88 +15,26 @@
   <template>
 
     <style include="shared-styles">
-      :host {
+      :host 
+      {
         display: block;
         background: #fff;
       }
 
-      .container {
+      .container 
+      {
         padding-bottom: 30px;
         text-align: center;
-      }
-
-      .people-wrapper {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-        margin-top: 40px;
-      }
-
-      .person {
-        @apply(--layout-vertical);
-        @apply(--layout-center);
-        color: var(--primary-text-color);
-        width: 50%;
-      }
-
-      .photo {
-        @apply(--img-circle);
-        height: 70px;
-        width: 70px;
-      }
-
-      .name {
-        margin-top: 5px;
-        padding: 0 16px;
-        line-height: .9;
-      }
-
-      .company {
-        margin-top: 4px;
-        padding: 0 16px;
-        display: block;
-        font-size: .7em;
-        line-height: 1;
-      }
-
-      .block-link {
-        margin-top: 25px;
-        display: block;
-        color: inherit;
-        font-size: .9em;
-      }
-
-      .company-logo {
-        margin: 5px auto;
-        width: 80px;
-        height: 20px;
-      }
-
-      @media (max-width: 600px) {
-        .person:nth-child(1),
-        .person:nth-child(2) {
-          margin-bottom: 40px;
-        }
-      }
-
-      @media (min-width: 601px) {
-        .photo {
-          height: 120px;
-          width: 120px;
-        }
-
-        .person {
-          @apply(--layout-flex);
-        }
-      }
-
-      .bottom-container
-      {
-        padding-top: 0;
       }
 
       .top-container
       {
         padding-bottom: 0;
+      }
+
+      .bottom-container
+      {
+        padding-top: 0;
       }
 
       activities-container:
@@ -105,6 +43,13 @@
         padding-bottom: 0;
       }
 
+      .block-link 
+      {
+        margin-top: 25px;
+        display: block;
+        color: inherit;
+        font-size: .9em;
+      }
     </style>
 
     <firebase-query

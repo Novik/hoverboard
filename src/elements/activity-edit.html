@@ -389,14 +389,14 @@
         {
           if (this.opened) 
           {
-            if(this._isNewActivity)
+            if(this._isNewActivity())
             {
               document.body.style.overflow = 'hidden';
             }
             this._finishRenderOpened();
           } else 
           {
-            if(this._isNewActivity)
+            if(this._isNewActivity())
             {
               document.body.style.overflow = '';
             }
