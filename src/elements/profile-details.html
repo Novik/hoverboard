@@ -177,7 +177,7 @@
     </firebase-document>
 
     <app-indexeddb-mirror
-      session="{$ firebase.indexedDbSession $}"
+      session="{$ firebase.indexedDbSession $}[[app.user.id]]"
       key="userDetails"
       data="{{_userPersistedData}}"
       persisted-data="{{userPersistedData}}">

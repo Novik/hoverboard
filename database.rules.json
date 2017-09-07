@@ -7,6 +7,19 @@
         ".write": "auth.uid === $uid"
       }
     },      
+    "public_activities": {
+      ".read": true,
+      ".indexOn": [ "data/public", "data/participants" ],
+      "$aid": {
+        ".write": "(!data.exists() && newData.child('data').child('owner').val() === auth.uid) || data.child('data').child('owner').val() === auth.uid",
+        "participants":
+        {
+          "$uid": {
+            ".write": "auth.uid === $uid"
+          }
+        }
+      }  
+    },
     "activities": {
       ".read": true,
       ".indexOn": [ "data/public", "data/participants" ],

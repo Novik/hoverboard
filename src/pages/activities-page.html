@@ -94,10 +94,8 @@
     <firebase-query
       id="publicActivities"
       app-name="{$ firebase.name $}"
-      path="/activities"
-      data="{{_publicActivities}}"
-      order-by-child="data/public"
-      equal-to="true"></firebase-query>
+      path="/public_activities"
+      data="{{_publicActivities}}"></firebase-query>
 
     <app-indexeddb-mirror
       session="{$ firebase.indexedDbSession $}"
@@ -115,7 +113,7 @@
       data="{{_myActivities}}"></firebase-query>
 
     <app-indexeddb-mirror
-      session="{$ firebase.indexedDbSession $}"
+      session="{$ firebase.indexedDbSession $}[[app.user.id]]"
       key="myActivities"
       data="{{_myActivities}}"
       persisted-data="{{myActivities}}">
@@ -228,9 +226,9 @@
 
         _onAddActivity: function()
         {
-          this._selectedActivity = '';
           window.requestAnimationFrame(function() 
           {
+            this._selectedActivity = '';
             this.$.activityEdit.open();
           }.bind(this));
         },
@@ -249,16 +247,17 @@
         {
           if(this.selected && (this._selectedActivity != activityId))
           {
-            this._selectedActivity = activityId;
             if(activityId) 
             {
                 window.requestAnimationFrame(function() 
                 {
+                  this._selectedActivity = activityId;
                   this.$.activityDetails.open();
                 }.bind(this));
             }
             else
             {
+               this._selectedActivity = activityId;
                this.$.activityDetails.close();
             }
           }

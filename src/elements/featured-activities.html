@@ -122,11 +122,31 @@
       persisted-data="{{allFeaturedActivities}}">
     </app-indexeddb-mirror>
 
+    <firebase-query
+      id="publicFeaturedActivities"
+      app-name="{$ firebase.name $}"
+      path="/public_activities"
+      order-by-child="data/participants"
+      limit-to-last="3"
+      data="{{_publicFeaturedActivities}}"></firebase-query>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="publicFeaturedActivities"
+      data="{{_publicFeaturedActivities}}"
+      persisted-data="{{publicFeaturedActivities}}">
+    </app-indexeddb-mirror>
+
     <div class="container top-container">
       <h4 class="heading">{$ featuredActivitiesTitle $}</h4>
     </div>
 
-    <activity-cards activities="[[allFeaturedActivities]]" app="{{app}}" zero-padding></activity-cards>
+    <template is="dom-if" if="[[app.user]]">
+      <activity-cards activities="[[allFeaturedActivities]]" zero-padding app="{{app}}"></activity-cards>
+    </template>
+    <template is="dom-if" if="[[!app.user]]">
+      <activity-cards activities="[[publicFeaturedActivities]]" zero-padding app="{{app}}"></activity-cards>
+    </template>
 
     <div class="container bottom-container">
       <a href="/activities" class="block-link">

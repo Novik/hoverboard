@@ -170,8 +170,8 @@
     </firebase-document>
 
     <app-indexeddb-mirror
-      session="{$ firebase.indexedDbSession $}"
-      key="activityEdit"
+      session="{$ firebase.indexedDbSession $}[[app.user.id]]"
+      key="activityEdit_[[activityId]]"
       data="{{_activityRaw}}"
       persisted-data="{{activityRaw}}">
     </app-indexeddb-mirror>
@@ -303,9 +303,18 @@
         {
           firebase.app("{$ firebase.name $}").database().ref("/activities/"+this.activityId).update( updates ).then(() =>
           {
+            if( updates.data.public )
+            {
+              firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).update( updates );
+            }
+            else
+            {
+              firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).remove().catch((error) => {});
+            }
             this.locked = false;
-            HOVERBOARD.Elements.Template.$.toast.showMessage(notification);              
-          }).catch(error => 
+            HOVERBOARD.Elements.Template.$.toast.showMessage(notification);
+          })
+          .catch(error => 
           {
             this.locked = false;
             HOVERBOARD.Elements.Template.$.toast.showMessage(error.message);

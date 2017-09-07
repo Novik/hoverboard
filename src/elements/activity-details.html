@@ -161,8 +161,8 @@
     </firebase-document>
 
     <app-indexeddb-mirror
-      session="{$ firebase.indexedDbSession $}"
-      key="activityDetails"
+      session="{$ firebase.indexedDbSession $}[[app.user.id]]"
+      key="activityDetails_[[activityId]]"
       data="{{_activityRaw}}"
       persisted-data="{{activityRaw}}">
     </app-indexeddb-mirror>
@@ -378,6 +378,10 @@
         _onDeleteActivity: function()
         {
           firebase.app("{$ firebase.name $}").storage().ref().child('activities/images/'+this.activityId).delete().catch((error) => {});
+          if(this.activity.data.public)
+          {
+            firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).remove().catch((error) => {});
+          }
           firebase.app("{$ firebase.name $}").database().ref("activities/"+this.activityId).remove().then(() =>
           {
             this.close();
@@ -390,6 +394,14 @@
            if( this.activityRaw && this._isEnabledActivity() )
            {
              this.activity = Object.assign({},this.activityRaw);
+           }
+           else
+           {
+             this.activity = 
+             {
+             	data: {},
+             	participants: {}
+             }
            }
         },
 

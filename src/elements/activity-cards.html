@@ -176,6 +176,28 @@
         padding-bottom: 0;
         height: 22px;
       }
+
+      .badge-container
+      {
+        display: inline-block;
+        position: relative;
+      }
+
+      .badge-value
+      {
+        position: absolute;
+        background-color: var(--accent-color);
+        color: white;
+        font-size: 11px;
+        border-radius: 50%;
+        top: -6px;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 22px;
+      }
+
     </style>
 
     <div class="container activities-container" zeropadding$="[[zeroPadding]]">
@@ -196,15 +218,19 @@
                   <div class="meta">
                     <a href="[[activity.data.site]]" noreferer noopener target="_blank">[[activity.data.location]]</a>, 
                     [[activity.data.date]] [[activity.data.time]]
-                    <paper-icon-button id="participants-1" class="participants" icon="person-pin" alt="participants"></paper-icon-button>
-                    <paper-badge for="participants-1" label="[[activity.data.participants]]"></paper-badge>
+                    <div class='badge-container'>
+                      <paper-icon-button class="participants" icon="person-pin" alt="participants"></paper-icon-button>
+                      <div class='badge-value'>[[activity.data.participants]]</div>
+                    </div>
                   </div>
                 </template>
                 <template is="dom-if" if="[[!_isActivityProp(activity.data,'site')]]">
                   <div class="meta">
                     [[activity.data.location]], [[activity.data.date]] [[activity.data.time]]
-                    <paper-icon-button id="participants-2" class="participants" icon="person-pin" alt="participants"></paper-icon-button>
-                    <paper-badge for="participants-2" label="[[activity.data.participants]]"></paper-badge>
+                    <div class='badge-container'>
+                      <paper-icon-button class="participants" icon="person-pin" alt="participants"></paper-icon-button>
+                      <div class='badge-value'>[[activity.data.participants]]</div>
+                    </div>
                   </div>
                 </template>
               </div>
@@ -248,7 +274,22 @@
           renderedCount: {
             type: Number,
             value: 0
+          },
+
+          filteredActivities: {
+            type: Array,
+            notify: true,
+            value: []
           }
+        },
+
+        observers: [
+          "_filterActivities(activities.*)"
+        ],
+
+        _filterActivities: function()
+        {
+          this.filteredActivities = this.activities.slice(0);
         }
 
       });
