@@ -47,12 +47,13 @@
       {
         if(data && data.mapURL)
         {
-          var coords = data.mapURL.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.?\d?)+z/);
+          var coords = data.mapURL.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.\d+)+z/);
           if( coords && coords.length==4 )
           {
   	    var place = data.mapURL.match(/^https?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/place\/([^\/]*)/);
 	    if( place.length==4 )
 	    {
+console.log("https://www.google.com/maps/embed/v1/place?key={$ googlemaps.apiKey $}&q="+place[3]+"&center="+coords[1]+","+coords[2]+"&zoom="+coords[3]);
 	      return( "https://www.google.com/maps/embed/v1/place?key={$ googlemaps.apiKey $}&q="+place[3]+"&center="+coords[1]+","+coords[2]+"&zoom="+coords[3] );
 	    }
           }
