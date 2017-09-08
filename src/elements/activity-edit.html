@@ -252,10 +252,10 @@
 	  if(file)
 	  {
             var reader = new FileReader();
-	    reader.onload = (e) =>
+	    reader.onload = function(e)
 	    {
 	      this.previewImg = e.target.result;
-	    };
+	    }.bind(this);
 	    reader.readAsDataURL(file);
 	  }
         },
@@ -295,7 +295,7 @@
 
         _uploadData: function(updates,notification)
         {
-          firebase.app("{$ firebase.name $}").database().ref("/activities/"+this.activityId).update( updates ).then(() =>
+          firebase.app("{$ firebase.name $}").database().ref("/activities/"+this.activityId).update( updates ).then(function()
           {
             if( updates.data.public )
             {
@@ -303,16 +303,16 @@
             }
             else
             {
-              firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).remove().catch((error) => {});
+              firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).remove().catch(function(error) {});
             }
             this.locked = false;
             HOVERBOARD.Elements.Template.$.toast.showMessage(notification);
-          })
-          .catch(error => 
+          }.bind(this))
+          .catch(function(error)
           {
             this.locked = false;
             HOVERBOARD.Elements.Template.$.toast.showMessage(error.message);
-          });
+          }.bind(this));
         },
 
         _updateActivity: function() 
@@ -347,11 +347,12 @@
                 uploadTask.on( firebase.storage.TaskEvent.STATE_CHANGED, null, function(error)
                 {
                   HOVERBOARD.Elements.Template.$.toast.showMessage(error.message);
-                }, () =>
+                }, 
+                function()
                 {
                   updates["data"].image = uploadTask.snapshot.downloadURL;
                   this._uploadData(updates,notification);
-                });
+                }.bind(this));
              }
              else
              {

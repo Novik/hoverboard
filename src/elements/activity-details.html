@@ -361,10 +361,10 @@
           firebase.app("{$ firebase.name $}").database().ref("activities/"+this.activityId+'/participants/'+this.app.user.uid).update(
           {
             "signed": state
-          }).then(() =>
+          }).then(function()
           {
             HOVERBOARD.Elements.Template.$.toast.showMessage(state ? "{$ addedToSubscription $}" : "{$ removedFromSubscription $}");
-          });
+          }.bind(this));
         },
 
         _onEditActivity: function()
@@ -377,16 +377,16 @@
 
         _onDeleteActivity: function()
         {
-          firebase.app("{$ firebase.name $}").storage().ref().child('activities/images/'+this.activityId).delete().catch((error) => {});
+          firebase.app("{$ firebase.name $}").storage().ref().child('activities/images/'+this.activityId).delete().catch(function(error) {});
           if(this.activity.data.public)
           {
-            firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).remove().catch((error) => {});
+            firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).remove().catch(function(error) {});
           }
-          firebase.app("{$ firebase.name $}").database().ref("activities/"+this.activityId).remove().then(() =>
+          firebase.app("{$ firebase.name $}").database().ref("activities/"+this.activityId).remove().then(function()
           {
             this.close();
             HOVERBOARD.Elements.Template.$.toast.showMessage("{$ activityWasRemoved $}");
-          });
+          }.bind(this));
         },
 
         _onActivityChanged: function()
@@ -431,11 +431,9 @@
 
         _onNeonAnimationFinish: function (e) {
           if (this.opened) {
-//            Polymer.IronDropdownScrollManager.pushScrollLock(this.$.scrollHeaderPanel);
             document.body.style.overflow = 'hidden';
             this._finishRenderOpened();
           } else {
-//            Polymer.IronDropdownScrollManager.removeScrollLock(this.$.scrollHeaderPanel);
             document.body.style.overflow = '';
             this._finishRenderClosed();
           }
