@@ -22,6 +22,18 @@ exports.updateParticipantsCount = functions.database.ref('/activities/{activityI
 	  			return( admin.database().ref('/activities/'+event.params.activityId+'/data').update(
 	  			{
 	  				participants: count
+				}).then( function() 
+				{
+					return( admin.database().ref('/public_activities/'+event.params.activityId+'/data').once("value") );
+				}).then( function(snap)
+				{
+					if( snap.exists() )
+					{
+						return(  snap.ref.update(
+	  					{
+			  				participants: count
+						}));
+					}
 				}));
 			}));
 	}

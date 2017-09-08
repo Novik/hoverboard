@@ -1,13 +1,13 @@
 {
   "url": "https://hoverboard-96745.firebaseapp.com/",
-  "startDate": "2016-09-09T09:00:00+03:00",
-  "endDate": "2016-09-10T19:00:00+03:00",
+  "startDate": "2017-10-13T09:00:00+03:00",
+  "endDate": "2017-10-15T19:00:00+03:00",
   "organizer": {
     "name": "GDG Lviv",
     "twitter": "gdglviv"
   },
   "webapp": {
-    "shortName": "DevFest",
+    "shortName": "GSoc2017",
     "themeColor": "#F57C00",
     "backgroundColor": "#F57C00"
   },
@@ -20,25 +20,8 @@
     "database": "https://hoverboard-96745.firebaseio.com",
     "storage": "hoverboard-96745.appspot.com",
     "api": "AIzaSyC2E8LfKPRZi3jTkcPesGufhLBOTB4uVbU",
-    "userSessionsPath": "/userSessions",
-    "ratingsPath": "/ratings",
-    "userDetailsPath": "/userDetails",
     "indexedDbSession": "hoverboard"
   },
-  "mailchimp": {
-    "url": "https://gdg.us11.list-manage.com/subscribe/post?u=b7e853a79164ddfdbda3ed77b&amp;id=7993e39fbe",
-    "name": "b_b7e853a79164ddfdbda3ed77b_7993e39fbe"
-  },
-  "dateFormat": {
-    "locale": "en-US",
-    "blog": {"month": "short", "day": "numeric", "year": "numeric"}
-  },
-  "hashtag": "dfua",
-  "disqusShortName": "hoverboard-gdg-x",
-  "tweetsSource": "/data/tweets.json",
-  "partnershipProposition": "http://bit.ly/df16-sponsor",
-  "videosSessionsUrl": "https://www.youtube.com/playlist?list=PLt8lEzcLNl31AX3-ONkkWmDOZezu9Cmnv",
-  "enableSessionsRating": true,
   "navigation": [
     {
       "route": "home",
@@ -50,57 +33,7 @@
     }
   ],
   "social": [
-    {
-      "name": "twitter",
-      "nickname": "GDGLviv",
-      "url": "https://twitter.com/gdglviv"
-    },
-    {
-      "name": "gplus",
-      "nickname": "102444623953913144164",
-      "url": "https://plus.google.com/102444623953913144164"
-    },
-    {
-      "name": "facebook",
-      "nickname": "GDGLviv",
-      "url": "https://www.facebook.com/GDGLviv"
-    },
-    {
-      "name": "linkedin",
-      "nickname": "google-developers-group-lviv",
-      "url": "https://www.linkedin.com/company/google-developers-group-lviv"
-    }
   ],
-  "location": {
-    "apiKey": "",
-    "name": "Pivdennyi Expo Center",
-    "address": "36 Shchyretska St, Lviv, Ukraine",
-    "link": "https://www.facebook.com/expopivdennij",
-    "pointer": {
-      "latitude": 49.809841,
-      "longitude": 23.972805,
-      "zoom": 15
-    },
-    "mapCenter": {
-      "latitude": 49.809841,
-      "longitude": 23.982805
-    },
-    "images": [
-      "/images/backgrounds/location_1.jpg",
-      "/images/backgrounds/location_2.jpg",
-      "/images/backgrounds/location_3.jpg"
-    ]
-  },
-  "gallery": {
-    "albumUrl": "https://plus.google.com/events/gallery/cc6tosp4ohkp6qj9pg5jb4g6o3k?sort=1",
-    "photos": {
-      "big": "/images/backgrounds/2015_1.jpg",
-      "small": [
-        "/images/backgrounds/2015_2.jpg",
-        "/images/backgrounds/2015_3.jpg"
-      ]
-    }
-  },
   "pages": {
     "home": {
       "title": "Home",

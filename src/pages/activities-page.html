@@ -218,10 +218,10 @@
 
         ready: function()
         {
-          this.$.activityDetails.addEventListener('details-closed', (e)=> 
+          this.$.activityDetails.addEventListener('details-closed', function(e) 
           {
             this.set('routeData.activityId', '');
-          });
+          }.bind(this));
         },
 
         _onAddActivity: function()

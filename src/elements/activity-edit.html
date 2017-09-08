@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
                                                                                                 
 <link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
@@ -166,15 +167,8 @@
       id="activityEdit"
       app-name="{$ firebase.name $}"
       path="activities/[[activityId]]"
-      data="{{_activityRaw}}">
+      data="{{activityRaw}}">
     </firebase-document>
-
-    <app-indexeddb-mirror
-      session="{$ firebase.indexedDbSession $}[[app.user.id]]"
-      key="activityEdit_[[activityId]]"
-      data="{{_activityRaw}}"
-      persisted-data="{{activityRaw}}">
-    </app-indexeddb-mirror>
 
     <app-datepicker-dialog
       id="suggestedDateDlg" 
@@ -305,7 +299,7 @@
           {
             if( updates.data.public )
             {
-              firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId).update( updates );
+              firebase.app("{$ firebase.name $}").database().ref("/public_activities/"+this.activityId+"/data").update( updates["data"] );
             }
             else
             {

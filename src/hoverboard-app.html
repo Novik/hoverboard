@@ -134,7 +134,7 @@
     <firebase-document
       id="userDetails"
       app-name="{$ firebase.name $}"
-      path="{$ firebase.userDetailsPath $}/[[app.user.uid]]"
+      path="/userDetails/[[app.user.uid]]"
       data="{{userDetailsData}}">
     </firebase-document>
 
@@ -364,7 +364,7 @@
         {
           if(this._authStatusKnown && this.app.user && this.$.auth.app && !alreadyLaunched)
           {
-            this.$.auth.app.database().ref("{$ firebase.userDetailsPath $}/"+this.app.user.uid).update(
+            this.$.auth.app.database().ref("/userDetails/"+this.app.user.uid).update(
             {
               displayName: this.app.user.displayName,
               alreadyLaunched: true
@@ -394,7 +394,7 @@
         {
           if( user && user.uid && this.$.auth.app)
           {
-            this.$.auth.app.database().ref("{$ firebase.userDetailsPath $}/"+user.uid).update(
+            this.$.auth.app.database().ref("/userDetails/"+user.uid).update(
             {
               providerName: user.providerData[0].displayName,
               photoURL: user.photoURL
