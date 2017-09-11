@@ -47,7 +47,7 @@
       {
         if(data && data.mapURL)
         {
-          var coords = data.mapURL.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.\d+)+z/);
+          var coords = data.mapURL.match(/@(-?\d+\.\d+),(-?\d+\.\d+),(\d+?\.?\d+)+z/);
           if( coords && coords.length==4 )
           {
   	    var place = data.mapURL.match(/^https?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/place\/([^\/]*)/);
