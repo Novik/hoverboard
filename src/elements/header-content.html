@@ -67,6 +67,7 @@
       .home-wrapper {
         width: 100%;
         font-size: 18px;
+        display: none;
       }
 
       .logo {
@@ -106,6 +107,12 @@
         margin-right: 5px;
       }
 
+      @media (min-width: 1400px) {
+        .home-wrapper {
+          display: block;
+        }
+      }
+
       @media (min-width: 601px) {
         .container {
           padding-bottom: 40px;
@@ -129,7 +136,7 @@
           <div class="container" center-justified>
             <div class="home-wrapper">
               <iron-image class="logo" src="/images/logo-light.svg" sizing="contain"
-                          alt="GDG DevFest Ukraine 2016"></iron-image>
+                          alt="Unofficial Summit Activities"></iron-image>
               <h3 class="dates">{$ dates $}</h3>
               <h2 class="motto">{$ motto $}</h2>
             </div>
