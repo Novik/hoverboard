@@ -173,7 +173,7 @@
     <app-datepicker-dialog
       id="suggestedDateDlg" 
       auto-update-date="true"
-      input-date="{{activity.date}}" 
+      input-date="[[activity.date]]" 
       date="{{activity.date}}" 
       theme="dark-theme" 
       disable-days="[]"
@@ -221,7 +221,7 @@
         },
 
         observers: [
-          '_resetActivityData(activityRaw.data)'
+          'resetActivityData(activityRaw.data)'
         ],
 
         behaviors: [
@@ -275,13 +275,20 @@
           this.$.suggestedTimeDlg.open();
         },
 
-        _resetActivityData: function()
+        resetActivityData: function()
         {
            if(!this.locked)
            {
              this.$.filepicker.inputElement.value = '';
              this.activity = Object.assign( 
              {
+	       date: "",
+	       description: "",
+	       image: "",
+	       location: "",
+	       public: true,
+	       time: "",
+	       title: "",
                money: 'free',
                paymentMethod: 'venue',
                public: false,
@@ -374,7 +381,7 @@
         },
 
         _renderClosed: function () {
-          this._resetActivityData();
+          this.resetActivityData();
           HOVERBOARD.Util.setMetaThemeColor(this._previousBrowserColor);
           this.backdropElement.close();
           this.playAnimation('exit');

@@ -229,6 +229,7 @@
           window.requestAnimationFrame(function() 
           {
             this._selectedActivity = '';
+            this.$.activityEdit.resetActivityData();
             this.$.activityEdit.open();
           }.bind(this));
         },
@@ -245,7 +246,10 @@
 
         _routePageChanged: function(activityId) 
         {
-          if(this.selected && (this._selectedActivity != activityId))
+
+          if((this._selectedActivity != activityId) 
+//              && this.selected
+          )
           {
             if(activityId) 
             {
@@ -257,7 +261,7 @@
             }
             else
             {
-               this._selectedActivity = activityId;
+               this._selectedActivity = '';
                this.$.activityDetails.close();
             }
           }
