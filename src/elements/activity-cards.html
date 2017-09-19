@@ -1,7 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../elements/truncate-marked-text.html">
+<link rel="import" href="iron-scroll-threshold.html">
+<link rel="import" href="truncate-marked-text.html">
 <link rel="import" href="../behaviors/cascaded-behavior.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
 <link rel="import" href="../behaviors/users-behavior.html">
@@ -96,14 +97,12 @@
           width: calc(100% / 2 - 2 * var(--grid-gutter));
           margin: var(--grid-gutter);
         }
-
       }
 
       @media (min-width: 961px) {
         .activity {
           width: calc(100% / 3 - 2 * var(--grid-gutter));
         }
-
       }
 
       .tags {
@@ -142,7 +141,7 @@
     </style>
 
     <div class="container activities-container" zeropadding$="[[zeroPadding]]">
-      <template is="dom-repeat" items="[[activities]]" as="activity" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}">
+      <template id="activityList" is="dom-repeat" items="[[activities]]" as="activity" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}" filter="_filter">
         <div class="activity" cascaded>
           <paper-material class="card">
             <a href$="/activities/[[activity.$key]]/" class="header">
@@ -189,6 +188,14 @@
       </template>
     </div>
 
+    <iron-scroll-threshold lower-threshold="264" on-lower-threshold="_loadMoreData" scroll-target="document" id="scrollTreshold"></iron-scroll-threshold>
+
+    <firebase-query
+      id="users"
+      app-name="{$ firebase.name $}"
+      path="/userDetails"
+    </firebase-query>
+
   </template>
 
   <script>
@@ -217,20 +224,56 @@
             value: 0
           },
 
-          filteredActivities: {
-            type: Array,
-            notify: true,
-            value: []
+          itemsPerPage: {
+            type: Number,
+            value: 0
+          },
+
+          _page: {
+            type: Number,
+            value: 1
+          },
+
+          _renderedItem: {
+            type: Number,
+            value: 0
+          },
+
+          filterHandler:
+          {
+            type: Function,
+            value: null
           }
+
         },
 
         observers: [
-          "_filterActivities(activities.*)"
+          "onChangeActivities(activities.splices)"
         ],
 
-        _filterActivities: function()
+        onChangeActivities: function()
         {
-          this.filteredActivities = this.activities.slice(0);
+          this._renderedItem = 0;
+        },
+
+        _filter: function(item)
+        {
+          if( (this.itemsPerPage  && (this._renderedItem >= this.itemsPerPage*this._page)) ||
+            (this.filterHandler && !this.filterHandler(item)) )
+           return(false);
+          this._renderedItem = this._renderedItem + 1;
+          return(true);
+        },
+
+        _loadMoreData: function()
+        {
+          if(this.activities.length)
+          {
+            this._page = this._page + 1;
+            this._renderedItem = 0;
+            this.$.activityList.render();
+          }
+          this.$.scrollTreshold.clearTriggers();
         }
 
       });

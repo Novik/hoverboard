@@ -30,6 +30,10 @@
     {
       "route": "activities",
       "permalink": "/activities/"
+    },
+    {
+      "route": "directory",
+      "permalink": "/directory/"
     }
   ],
   "social": [
@@ -53,6 +57,14 @@
     },
     "activities": {
       "title": "Activities",
+      "headerSettings": {
+        "backgroundColor": "#03a9f4",
+        "fontColor": "#fff",
+        "tabBarColor": "#fff"
+      }
+    },
+    "directory": {
+      "title": "Directory",
       "headerSettings": {
         "backgroundColor": "#03a9f4",
         "fontColor": "#fff",

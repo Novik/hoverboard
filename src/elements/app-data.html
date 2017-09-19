@@ -3,18 +3,34 @@
 
 <dom-module id="app-data">
   <template>
-    <firebase-document
+    <firebase-query
       id="users"
       app-name="{$ firebase.name $}"
       path="/userDetails"
+      order-by-child="displayName"
       data="{{_firebaseUsers}}">
-    </firebase-document>
+    </firebase-query>
 
     <app-indexeddb-mirror
       session="{$ firebase.indexedDbSession $}"
       key="users"
       data="{{_firebaseUsers}}"
       persisted-data="{{app.users}}">
+    </app-indexeddb-mirror>
+
+    <firebase-query
+      id="organizations"
+      app-name="{$ firebase.name $}"
+      path="/organizations"
+      order-by-key
+      data="{{_firebaseOrganizations}}">
+    </firebase-query>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="organizations"
+      data="{{_firebaseOrganizations}}"
+      persisted-data="{{app.organizations}}">
     </app-indexeddb-mirror>
 
   </template>
@@ -33,8 +49,8 @@
         },
 
         ready: function () {
-          this.app = this.app || {};
-        }
+          this.app = this.app || {}; 
+	}
     });
 
   }());

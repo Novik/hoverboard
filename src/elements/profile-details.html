@@ -13,6 +13,9 @@
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 <link rel="import" href="../../bower_components/app-datepicker/app-datepicker-dialog.html">
 <link rel="import" href="../../bower_components/paper-countries/paper-countries.html">
+<link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete-suggestions.html">
+
+
 <link rel="import" href="../styles/bootstrap-grid.html">
 <link rel="import" href="../styles/dialog-styles.html">
 <link rel="import" href="../styles/shared-styles.html">
@@ -23,20 +26,23 @@
   <template>
 
     <style include="shared-styles dialog-styles">
-      paper-input 
-      { 
-        --paper-input-container: { padding: 0; };
-        --paper-input-container-label: { font-size: 14px; };
-        --paper-input-container-input: { font-size: 14px; };
-      }
 
       :host 
       {
+        font-size: 16px;
+
         --paper-icon-button: 
         {
           padding: 4px;
           width: 32px;
           height: 32px;
+        }
+
+        --suggestions-wrapper:
+        {
+          width: auto;
+          left: 15px;
+          right: 15px;	
         }
       }
 
@@ -94,6 +100,8 @@
             <div class='row'>
               <paper-input class='col-sm-6' label="Name" type="text" id="displayName" name="displayName" value="{{userDetails.displayName}}" required auto-validate></paper-input>
               <paper-input class='col-sm-6' label="Organization" type="text" id="organization" name="organization" value="{{userDetails.organization}}" auto-validate></paper-input>
+              <paper-autocomplete-suggestions class='col-sm-6 col-sm-offset-6' for="organization" id="orgSuggestions" source="[[app.organizations]]">
+              </paper-autocomplete-suggestions>
             </div>
             <div class='row'>
               <paper-countries class='col-sm-6' country="{{userDetails.origin_country}}" auto-validate="true" label="Originally from" placeholder="Enter country name..."></paper-countries>
@@ -204,7 +212,8 @@
         },
 
         observers: [
-          '_resetProfileData(userPersistedData.*)'
+          '_resetProfileData(userPersistedData.*)',
+          '_setOrganizationSuggestions(app.organizations.*)',
         ],
 
         behaviors: [
@@ -226,6 +235,11 @@
             var transform = 40 * (d.y / m > 1 ? 1 : d.y / m);
             Polymer.Base.translate3d(transform + 'px', 0, 0, title);
           });
+        },
+
+        _setOrganizationSuggestions: function()
+        {
+             this.$.orgSuggestions.source = this.app.organizations;
         },
 
         _resetProfileData: function()
@@ -251,12 +265,31 @@
           }
         },
 
+        _signToOrganization: function(org,value)
+        {
+          if(org.trim().length)
+          {
+            firebase.app("{$ firebase.name $}").database().ref("/organizationDetails/"+this._slugify(org)).once("value").then(function(snap)
+            {
+              if( snap.exists() )
+              {
+                snap.ref.child("/participants/"+this.app.user.uid).update( { signed: value } );
+              }
+            }.bind(this));
+          }
+        },
+
         _updateProfile: function()
         {
           if( this.$.userDetailsForm.validate() )
           {
             this.locked = true;
             this.close();
+            if( this.userPersistedData.organization != this.userDetails.organization )
+            {
+              this._signToOrganization(this.userPersistedData.organization,false);
+              this._signToOrganization(this.userDetails.organization,true);
+            }
             this.userPersistedData = Object.assign({}, this.userDetails);
             this.app.user.updateProfile(
             {

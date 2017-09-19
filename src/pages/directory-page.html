@@ -1,0 +1,214 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
+
+<link rel="import" href="../styles/shared-styles.html">
+<link rel="import" href="../elements/footer-block.html">
+<link rel="import" href="../elements/user-cards.html">
+<link rel="import" href="../elements/organization-cards.html">
+
+<link rel="import" href="../behaviors/utils-behavior.html">
+<link rel="import" href="../behaviors/page-behavior.html">
+<link rel="import" href="../behaviors/cascaded-behavior.html">
+
+<dom-module id="directory-page">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .nav-container
+      {
+      	padding-bottom: 0;
+      }
+
+      .subpage-nav {
+        padding: 0 16px;
+        height: 69px;
+        background: var(--default-primary-color);
+      }
+
+      .subpage-nav[phoneSize] {
+        padding: 0 8px;
+      }
+
+      .subpage-nav[phoneSize] .directory-tabs {
+        width: 100%;
+      }
+
+      .directory-tabs {
+        height: 100%;
+        --paper-tabs-selection-bar-color: var(--text-primary-color);
+      }
+
+      .subpage-nav[phoneSize] .directory-tabs::before,
+      .subpage-nav[phoneSize] .directory-tabs::after {
+        display: block;
+        width: 8px;
+        height: 100%;
+        top: 0;
+        position: absolute;
+        z-index: 1;
+        content: "";
+        background: linear-gradient(to right, var(--default-primary-color) 10%, rgba(147, 126, 232, 0) 100%);
+      }
+
+      .subpage-nav[phoneSize] .directory-tabs::after {
+        right: 0;
+        background: linear-gradient(to left, var(--default-primary-color) 10%, rgba(147, 126, 232, 0) 100%);
+      }
+
+      .directory-tabs paper-tab {
+        margin: 0 8px;
+      }
+
+      paper-tab a {
+        color: var(--text-primary-color);
+      }
+
+    </style>
+
+    <app-route route="{{route}}"
+               pattern="/:part"
+               data="{{routeData}}"
+               query-params="{{queryParams}}"></app-route>
+
+    <div class="container nav-container">
+      <nav
+        class="subpage-nav"
+        phoneSize$="[[app.isPhoneSize]]"
+        layout horizontal center justified relative>
+        <paper-tabs
+          class="directory-tabs"
+          selected="{{_selectedPart}}"
+          attr-for-selected="part"
+          scrollable="[[app.isPhoneSize]]"
+          relative
+          hide-scroll-buttons>
+          <paper-tab part="users" link>
+            <a href="/directory/users" layout center>
+              Users
+            </a>
+          </paper-tab>
+          <paper-tab part="organizations" link>
+            <a href="/directory/organizations" layout center>
+              Organizations
+            </a>
+          </paper-tab>
+        </paper-tabs>
+      </nav>
+    </div>
+
+    <template is="dom-if" if="[[_isUsersSelected(_selectedPart,app.page)]]">
+      <user-cards app="{{app}}" id="userCards" items-per-page="12" selected="{{_selectedObject}}"></user-cards>
+    </template>
+    <template is="dom-if" if="[[!_isUsersSelected(_selectedPart,app.page)]]">
+      <organization-cards app="{{app}}" id="organizationCards" items-per-page="12" selected="{{_selectedObject}}"></organization-cards>
+    </template>
+
+    <footer-block app="{{app}}" cascaded></footer-block>
+
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+
+        is: 'directory-page',
+
+        behaviors: [
+          HOVERBOARD.PageBehavior,
+          HOVERBOARD.CascadedBehavior,
+          HOVERBOARD.UtilsBehavior
+        ],
+
+        properties: {
+
+          route: {
+            type: Object
+          },
+
+          routeData: {
+            type: Object,
+            notify: true
+          },
+
+          _selectedPart: {
+            type: String,
+            notify: true,
+            value: 'users'
+          },
+
+          _selectedObject: {
+            type: String,
+            notify: true,
+            value: ''
+          }
+        },
+
+        observers: [
+          '_routePartChanged(routeData.part)',
+          '_queryParamsChanged(queryParams)'
+        ],
+
+        listeners: {
+          'iron-overlay-closed': '_resetIdParam'
+        },
+
+        _isUsersSelected: function()
+        {
+          return(this.isSelected() && (this._selectedPart=="users"));
+        },
+
+        _queryParamsChanged: function(params) 
+        {
+          if(this.isSelected() && (this._selectedObject != params.id))
+          {
+            this._selectedObject = params.id;
+          }
+        },
+
+        _routePartChanged: function(part) 
+        {
+          if(this.isSelected())
+          {
+            if(!part)
+            {
+              this.set('routeData.part', 'users');
+            }
+            else
+            {
+              this._selectedPart = part;
+            }
+          }
+        },
+
+        _resetIdParam: function() 
+        {
+          this.set('queryParams.id', null);
+        },
+
+        _getCustomStyleValue: function (value) {
+          return 'background-color: ' + this.getComputedStyleValue('--' + this._generateClass(value)) || this.getComputedStyleValue('--general');
+        }
+      });
+
+    }());
+  </script>
+
+</dom-module>
+

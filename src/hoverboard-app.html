@@ -173,13 +173,17 @@
                              selected-attribute="selected">
 
           <home-page name="home"
-                     app="{{app}}"
-                     people="{{speakers}}"></home-page>
+                     app="{{app}}"></home-page>
 
           <activities-page name="activities"
                      app="{{app}}"
                      route="{{subRoute}}"
                      ></activities-page>
+
+          <directory-page name="directory"
+                     app="{{app}}"
+                     route="{{subRoute}}"
+                     ></directory-page>
 
         </neon-animated-pages>
       </div>
@@ -290,9 +294,7 @@
         },
 
         _pageChanged: function (page) {
-          if (page && page !== 'home'
-//            && page !== 'null'
-            ) {
+          if (page && page !== 'home') {
             this.importHref(this.resolveUrl('pages/' + page + '-page.html'), null, null, true);
           }
         },

@@ -3,6 +3,7 @@
     ".write": false,
     "userDetails": {
       ".read": true,
+        ".indexOn": [ "displayName" ],
       "$uid": {
         ".write": "auth.uid === $uid"
       }
@@ -32,6 +33,20 @@
           }
         }
       }
-    }
+    },
+    "organizationDetails": {
+      ".read": true,
+      "$oid": {
+        "participants":
+        {
+          "$uid": {
+            ".write": "auth.uid === $uid"
+          }
+        }
+      }  
+    },
+    "organizations": {
+      ".read": true
+    }  
   }
 }

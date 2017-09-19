@@ -1,0 +1,219 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="iron-scroll-threshold.html">
+<link rel="import" href="truncate-marked-text.html">
+<link rel="import" href="../behaviors/cascaded-behavior.html">
+<link rel="import" href="../behaviors/utils-behavior.html">
+
+<dom-module id="user-cards">
+
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --grid-gutter: 8px;
+        --colums-number: 4;
+        --general: #bdbdbd;
+
+        --truncate-marked-text-style: {
+          font-size: 16px;
+          line-height: 1.5;
+        };
+      }
+
+      .users-container
+      {
+        padding-top: 0;
+      }
+
+      .user-wrapper {
+        @apply(--layout-vertical);
+        @apply(--layout-wrap);
+        padding-top: 40px;
+      }
+
+      iron-image
+      {
+        margin-bottom: 8px;
+      }
+
+      .user {
+        @apply(--layout-horizontal);
+        width: 100%;
+        margin: var(--grid-gutter) 0;
+      }
+
+      .card {
+        text-align: center;
+        padding: 16px;
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        background: #FFFFFF;
+        color: var(--primary-text-color);
+      }
+
+      .photo {
+        @apply(--img-circle);
+        height: 120px;
+        width: 120px;
+      }
+
+      .filter-container
+      {
+        padding: 8px 24px;
+        background: var(--default-primary-color);
+      }
+
+      .filter-container[phoneSize] {
+        padding: 8px 16px;
+      }
+
+      @media (min-width: 601px) {
+        .user-wrapper {
+          @apply(--layout-horizontal);
+        }
+
+        .user {
+          width: calc(100% / 2 - 2 * var(--grid-gutter));
+          margin: var(--grid-gutter);
+        }
+      }
+
+      @media (min-width: 769px) {
+        .user {
+          width: calc(100% / 3 - 2 * var(--grid-gutter));
+        }
+      }
+
+      @media (min-width: 1400px) {
+        .user {
+          width: calc(100% / 4 - 2 * var(--grid-gutter));
+        }
+      }
+      
+    </style>
+
+    <div class="container users-container">
+      <div class="filter-container" phoneSize$="[[app.isPhoneSize]]">
+        <paper-input label="Filter" type="text" value="{{_userFilter}}" no-label-float>
+          <iron-icon icon="search" suffix></iron-icon>
+        </paper-input>
+      </div>
+      <div class="user-wrapper">
+        <template id="usersList" is="dom-repeat" items="[[app.users]]" as="user" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}" filter="_filter">
+          <div class="user" cascaded>
+            <paper-material class="card">
+              <iron-image
+                class="photo"
+                src="[[user.photoURL]]"
+                sizing="cover"
+              ></iron-image>
+              <h4 class="name">[[user.displayName]]</h4>
+              <span class="company">[[user.organization]]</span>
+            </paper-material>
+          </div>
+        </template>
+        <template is="dom-if" if="{{!renderedCount}}">
+          No users available.
+        </template>
+      </div>
+    </div>
+
+    <iron-scroll-threshold lower-threshold="264" on-lower-threshold="_loadMoreData" scroll-target="document" id="scrollTreshold"></iron-scroll-threshold>
+
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+
+        is: 'user-cards',
+
+        behaviors: [
+          HOVERBOARD.CascadedBehavior,
+          HOVERBOARD.UtilsBehavior
+        ],
+
+        properties: {
+          renderedCount: {
+            type: Number,
+            value: 0
+          },
+
+          itemsPerPage: {
+            type: Number,
+            value: 0
+          },
+
+          _page: {
+            type: Number,
+            value: 1
+          },
+
+          _renderedItem: {
+            type: Number,
+            value: 0
+          },
+
+          _userFilter: {
+            type: String,
+            value: '',
+            observer: 'onFilterTyping'
+          }
+
+        },
+
+        observers: [
+          "onChangeUsers(app.users.splices)"
+        ],
+
+        onChangeUsers: function()
+        {
+          this._renderedItem = 0;
+        },
+
+        onFilterTyping: function()
+        {
+          this._renderedItem = 0;
+          this.$.usersList.render();
+        },
+
+        _filter: function(item)
+        {
+          if( (this.itemsPerPage && 
+            (this._renderedItem >= this.itemsPerPage*this._page)) || 
+            (this._userFilter.length && (item.displayName.toLowerCase().indexOf(this._userFilter.toLowerCase())<0)) )
+          {
+            return(false);
+          }
+          else
+          {
+            this._renderedItem = this._renderedItem + 1;
+            return(true);
+          }
+        },
+
+        _loadMoreData: function()
+        {
+          if(this.app.users.length)
+          {
+            this._page = this._page + 1;
+            this._renderedItem = 0;
+            this.$.usersList.render();
+          }
+          this.$.scrollTreshold.clearTriggers();
+        }
+
+      });
+
+    }());
+  </script>
+
+</dom-module>

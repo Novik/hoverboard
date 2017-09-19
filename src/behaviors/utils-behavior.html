@@ -38,6 +38,14 @@
 
       _addToValue: function (value, addition) {
         return value + addition;
+      },
+
+      _slugify: function(text)
+      {
+        return( text.toString().trim().toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^\u0100-\uFFFF\w\-]/g,'-')
+          .replace(/\-\-+/g, '-'));
       }
 
     };

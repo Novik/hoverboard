@@ -9,22 +9,10 @@
      * @polymerBehavior HOVERBOARD.UsersBehavior
      */
     HOVERBOARD.UsersBehavior = {
-      properties: 
-      {
-        app: 
-        {
-          type: Object,
-          notify: true,
-          value:
-          {
-            users: {}
-          }
-        }
-      },
 
       _getUserProp: function(key,prop)
       {
-        return( this.app.users && this.app.users[key] ? this.app.users[key][prop] : '' );
+         return( this.$.users && this.$.users.child(key) ? this.$.users.child(key)[prop] : '' );
       },
 
       _getUserName: function(key)

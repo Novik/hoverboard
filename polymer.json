@@ -2,7 +2,8 @@
   "entrypoint": "index.html",
   "shell": "src/hoverboard-app.html",
   "fragments": [
-    "src/pages/activities-page.html"
+    "src/pages/activities-page.html",
+    "src/pages/directory-page.html"
   ],
   "sources": [
     "data/**/*",

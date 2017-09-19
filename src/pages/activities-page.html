@@ -162,13 +162,13 @@
     </template>
 
     <template is="dom-if" if="[[_isAllSection(app.user,section)]]">
-      <activity-cards activities="[[allActivities]]" app="{{app}}"></activity-cards>
+      <activity-cards activities="[[allActivities]]" app="{{app}}" items-per-page="3"></activity-cards>
     </template>
     <template is="dom-if" if="[[_isMySection(app.user,section)]]">
-      <activity-cards activities="[[myActivities]]" app="{{app}}"></activity-cards>
+      <activity-cards activities="[[myActivities]]" app="{{app}}" items-per-page="3"></activity-cards>
     </template>
     <template is="dom-if" if="[[!app.user]]">
-      <activity-cards activities="[[publicActivities]]" app="{{app}}"></activity-cards>
+      <activity-cards activities="[[publicActivities]]" app="{{app}}" items-per-page="3"></activity-cards>
     </template>
 
     <footer-block app="{{app}}" cascaded></footer-block>
@@ -246,10 +246,7 @@
 
         _routePageChanged: function(activityId) 
         {
-
-          if((this._selectedActivity != activityId) 
-//              && this.selected
-          )
+          if(this.isSelected() && (this._selectedActivity != activityId))
           {
             if(activityId) 
             {

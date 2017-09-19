@@ -30,15 +30,10 @@
   <template>
 
     <style include="shared-styles dialog-styles">
-      paper-input 
-      { 
-        --paper-input-container: { padding: 0; };
-        --paper-input-container-label: { font-size: 14px; };
-        --paper-input-container-input: { font-size: 14px; };
-      }
-
       :host 
       {
+        font-size: 16px;
+
         --paper-icon-button: 
         {
           padding: 4px;
@@ -55,6 +50,11 @@
       paper-radio-group
       {
         --paper-radio-group-item-padding: 5px;
+      }
+
+      ul
+      {
+        margin-top: 0;
       }
 
       paper-checkbox
@@ -217,7 +217,13 @@
           previewImg: {
             type: String,
             value: null
+          },
+
+          _isNewActivity: {
+            type: Boolean,
+            value: true
           }
+
         },
 
         observers: [
@@ -282,7 +288,7 @@
              this.$.filepicker.inputElement.value = '';
              this.activity = Object.assign( 
              {
-	       date: "",
+	       date: new Date().toISOString().slice(0, 10).replace(/-/g, '/'),
 	       description: "",
 	       image: "",
 	       location: "",
@@ -328,13 +334,13 @@
           {
             this.locked = true;
   	    this.close();
-  	    if( (this.app.user.uid==this.activity.owner) || this._isNewActivity() )
+  	    if( (this.app.user.uid==this.activity.owner) || this._isNewActivity )
   	    {
   	      HOVERBOARD.Elements.Template.$.toast.showMessage("{$ updateInProgress $}",null,null,null,-1);
   	      var notification = this._getActivityNotification();
   	      var updates = {};
   	      updates["data"] = Object.assign({},this.activity);
-  	      if( this._isNewActivity() )
+  	      if( this._isNewActivity )
   	      {
   	        updates.data.owner = this.app.user.uid;
     	        updates["participants/"+this.app.user.uid+"/signed"] = true;
@@ -370,6 +376,7 @@
         },
 
         _renderOpened: function () {
+          this._isNewActivity = !this.activityId;
           if (this.withBackdrop && !this.app.isPhoneSize) {
             this.backdropElement.open();
           }
@@ -391,14 +398,14 @@
         {
           if (this.opened) 
           {
-            if(this._isNewActivity())
+            if(this._isNewActivity)
             {
               document.body.style.overflow = 'hidden';
             }
             this._finishRenderOpened();
           } else 
           {
-            if(this._isNewActivity())
+            if(this._isNewActivity)
             {
               document.body.style.overflow = '';
             }
@@ -406,24 +413,19 @@
           }
         },
 
-        _isNewActivity: function()
-        {
-          return(!this.activityId);
-        },
-
         _getActivityButton: function()
         {
-          return( this._isNewActivity() ? "{$ activityCreateButton $}" : "{$ activityUpdateButton $}");
+          return( this._isNewActivity ? "{$ activityCreateButton $}" : "{$ activityUpdateButton $}");
         },
 
         _getActivityTitle: function()
         {
-          return( this._isNewActivity() ? "{$ activityCreateTitle $}" : "{$ activityUpdateTitle $}");
+          return( this._isNewActivity ? "{$ activityCreateTitle $}" : "{$ activityUpdateTitle $}");
         },
 
         _getActivityNotification: function()
         {
-          return( this._isNewActivity() ? "{$ activityCreated $}" : "{$ activityUpdated $}");
+          return( this._isNewActivity ? "{$ activityCreated $}" : "{$ activityUpdated $}");
         }
       });
 
