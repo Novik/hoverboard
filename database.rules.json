@@ -3,7 +3,7 @@
     ".write": false,
     "userDetails": {
       ".read": true,
-        ".indexOn": [ "displayName" ],
+        ".indexOn": "displayName",
       "$uid": {
         ".write": "auth.uid === $uid"
       }
@@ -46,7 +46,8 @@
       }  
     },
     "organizations": {
-      ".read": true
+      ".read": true,
+      ".indexOn": "participantCount"
     }  
   }
 }

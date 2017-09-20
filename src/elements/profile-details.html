@@ -14,8 +14,7 @@
 <link rel="import" href="../../bower_components/app-datepicker/app-datepicker-dialog.html">
 <link rel="import" href="../../bower_components/paper-countries/paper-countries.html">
 <link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete-suggestions.html">
-
-
+<link rel="import" href="polymerfire.html">
 <link rel="import" href="../styles/bootstrap-grid.html">
 <link rel="import" href="../styles/dialog-styles.html">
 <link rel="import" href="../styles/shared-styles.html">
@@ -136,6 +135,14 @@
             </div>
             </section>
             <section>
+            <h3>Privacy</h3>
+            <paper-radio-group selected="{{userDetails.privacy}}" layout vertical left>
+              <paper-radio-button noink name="public">List me publicly in the directory (anyone can look me up)</paper-radio-button>
+              <paper-radio-button noink name="restricted">List me discreetly in the directory (only registered users accepted by the mods can look me me)</paper-radio-button>
+              <paper-radio-button noink name="protected">Don't list me at all, just my organization, name and photo</paper-radio-button>
+            </paper-radio-group>
+            </section>
+            <section>
             <h3>Proof that you belong here</h3>
             <paper-radio-group selected="{{userDetails.belongHereProof}}" layout vertical left>
               <paper-radio-button noink name="mailing_list">I have written in the mentor mailing list, just look me up!</paper-radio-button>
@@ -244,7 +251,7 @@
 
         _resetProfileData: function()
         {
-           this.userDetails = Object.assign( {}, this.userPersistedData );
+           this.userDetails = Object.assign( { privacy: 'public' }, this.userPersistedData );
         },
 
         _showArrivalDateDlg: function()

@@ -1,0 +1,40 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<script>
+  (function () {
+    'use strict';
+
+    /**
+     * @polymerBehavior HOVERBOARD.PopupBehavior
+     */
+    HOVERBOARD.PopupBehavior = {
+
+      properties: {
+        pendingHref: {
+          type: String,
+          value: null
+        }
+      },
+
+      _closeAndRedirect: function(e)
+      {
+        e.preventDefault();
+        this.pendingHref = e.currentTarget.getAttribute('href');
+        this.close();
+      },
+
+      _checkRedirect: function()
+      {
+        if(this.pendingHref)
+        {
+          window.history.pushState({}, null, this.pendingHref);
+          window.dispatchEvent(new CustomEvent('location-changed'));
+          this.pendingHref = null;
+        }
+      }
+
+    };
+
+  }());
+</script>

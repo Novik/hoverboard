@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="iron-scroll-threshold.html">
 <link rel="import" href="truncate-marked-text.html">
+<link rel="import" href="user-details.html">
 <link rel="import" href="../behaviors/cascaded-behavior.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
 
@@ -98,6 +99,14 @@
       
     </style>
 
+    <user-details id="userDetails"
+      app="{{app}}"
+      user-id="[[selected]]"
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation"
+      with-backdrop>
+    </user-details>
+
     <div class="container users-container">
       <div class="filter-container" phoneSize$="[[app.isPhoneSize]]">
         <paper-input label="Filter" type="text" value="{{_userFilter}}" no-label-float>
@@ -106,7 +115,7 @@
       </div>
       <div class="user-wrapper">
         <template id="usersList" is="dom-repeat" items="[[app.users]]" as="user" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}" filter="_filter">
-          <div class="user" cascaded>
+          <a class="user" cascaded href$="/directory/users?id=[[user.$key]]">
             <paper-material class="card">
               <iron-image
                 class="photo"
@@ -116,7 +125,7 @@
               <h4 class="name">[[user.displayName]]</h4>
               <span class="company">[[user.organization]]</span>
             </paper-material>
-          </div>
+          </a>
         </template>
         <template is="dom-if" if="{{!renderedCount}}">
           No users available.
@@ -152,6 +161,11 @@
             value: 0
           },
 
+          selected: {
+            type: String,
+            value: ''
+          },
+
           _page: {
             type: Number,
             value: 1
@@ -165,21 +179,37 @@
           _userFilter: {
             type: String,
             value: '',
-            observer: 'onFilterTyping'
+            observer: '_onFilterTyping'
           }
 
         },
 
         observers: [
-          "onChangeUsers(app.users.splices)"
+          "_onChangeUsers(app.users.splices)",
+          "_onChangeUserId(selected)"
         ],
 
-        onChangeUsers: function()
+        _onChangeUserId: function(selected)
+        {
+          if(this.selected)
+          {
+            window.requestAnimationFrame(function() 
+            {
+              this.$.userDetails.open();
+            }.bind(this));
+          }
+          else
+          {
+            this.$.userDetails.close();
+          }
+        },
+
+        _onChangeUsers: function()
         {
           this._renderedItem = 0;
         },
 
-        onFilterTyping: function()
+        _onFilterTyping: function()
         {
           this._renderedItem = 0;
           this.$.usersList.render();

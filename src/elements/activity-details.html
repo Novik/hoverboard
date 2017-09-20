@@ -1,8 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
 <link rel="import" href="../../bower_components/app-storage/app-network-status-behavior.html">
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
@@ -11,17 +9,14 @@
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-
 <link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
-
-<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
-
 <link rel="import" href="../styles/dialog-styles.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
 <link rel="import" href="../behaviors/users-behavior.html">
 <link rel="import" href="../behaviors/activity-behavior.html">
-
+<link rel="import" href="../behaviors/popup-behavior.html">
+<link rel="import" href="polymerfire.html">
 <link rel="import" href="truncate-marked-text.html">
 <link rel="import" href="activity-edit.html">
 
@@ -288,13 +283,13 @@
           <div class="metadata-wrapper">
             <div class="main-info">
               <template is="dom-repeat" items="[[_toArray(activity.participants)]]" as="user" filter="_isParticipantSigned">
-                <div class="participant-container">
+                <a class="participant-container" href="/directory/users?id=[[user.key]]" on-tap="_closeAndRedirect">
                   <div class="photo participant" style$="background-image: url('[[_getUserPhoto(user.key)]]')"></div>
                   <div class="participant-info">
                     <div class="meta">[[_getUserName(user.key)]]</div>
                     <div class="meta highlight">[[_getUserProp(user.key,'organization')]]</div>
                  </div>
-               </div>
+               </a>
               </template>
             </div>
           </div>
@@ -319,7 +314,8 @@
           Polymer.AppNetworkStatusBehavior,
           HOVERBOARD.ActivityBehavior,
           HOVERBOARD.UsersBehavior,
-          HOVERBOARD.UtilsBehavior
+          HOVERBOARD.UtilsBehavior,
+          HOVERBOARD.PopupBehavior
         ],
 
         properties: {
@@ -460,6 +456,7 @@
           } else {
             document.body.style.overflow = '';
             this._finishRenderClosed();
+            this._checkRedirect();
           }
         }
       });

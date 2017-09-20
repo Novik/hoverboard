@@ -1,0 +1,246 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../styles/bootstrap-grid.html">
+<link rel="import" href="../styles/dialog-styles.html">
+<link rel="import" href="../behaviors/utils-behavior.html">
+<link rel="import" href="../behaviors/popup-behavior.html">
+<link rel="import" href="polymerfire.html">
+
+<dom-module id="user-details">
+
+  <template>
+
+    <style include="shared-styles dialog-styles">
+      a {
+        color: var(--default-primary-color);
+        text-decoration: none;
+      }
+
+      bootstrap-grid
+      {
+        padding: 24px;
+      }
+
+      paper-toolbar
+      {
+	background-size: contain;
+	background-position: center center;	
+	background-repeat: no-repeat;
+      }
+
+      section
+      {
+        padding-top: 30px;
+        padding-bottom: 10px;
+      }
+
+      .section-title
+      {
+        margin-bottom: 10px;
+      }
+
+      .avatar
+      {
+        @apply(--img-circle);
+        height: 120px;
+        width: 120px;
+      }
+
+    </style>
+
+    <firebase-document
+      id="user"
+      app-name="{$ firebase.name $}"
+      path="/userDetails/[[userId]]"
+      data="{{_userRaw}}">
+    </firebase-document>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}[[app.user.id]]"
+      key="userDetails_[[userId]]"
+      data="{{_userRaw}}"
+      persisted-data="{{userRaw}}">
+    </app-indexeddb-mirror>
+
+    <paper-scroll-header-panel id="scrollHeaderPanel" condenses no-reveal>
+      <paper-toolbar class="tall">
+        <a href="/directory/users">
+          <paper-icon-button class="back-button" dialog-dismiss icon="arrow-back"></paper-icon-button>
+        </a>
+        <div class="middle fallback-image-wrapper" hidden$="{{app.isPhoneSize}}">
+          <iron-image class="avatar" src="[[user.photoURL]]" sizing="cover"></iron-image>
+        </div>
+       </paper-toolbar>
+      <div slot="content">
+        <bootstrap-grid>
+          <h2 class='main-title'>[[user.displayName]]</h2>
+          <template is="dom-if" if="[[_isUserProp('organization',user)]]">
+            <div class='row'>
+              <paper-input class='col-sm-12' always-float-label label="Organization" type="text" value="[[user.organization]]" readonly></paper-input>
+            </div>
+          </template>
+          <template is="dom-if" if="[[_isUserPrivacyEnabled(user,app.user)]]">
+            <div class='row'>
+              <template is="dom-if" if="[[_isUserProp('origin_country',user)]]">
+                <paper-input class='col-sm-6' always-float-label value="[[user.origin_country.name]]" label="Originally from" readonly>
+                  <iron-icon suffix src="/bower_components/paper-countries/icons/[[_getCountryCode(user.origin_country.code,user)]].svg"></iron-icon>
+                </paper-input>
+              </template>
+              <template is="dom-if" if="[[_isUserProp('living_country',user)]]">
+                <paper-input class='col-sm-6' always-float-label value="[[user.living_country.name]]" label="Currently living in" readonly>
+                  <iron-icon suffix src="/bower_components/paper-countries/icons/[[_getCountryCode(user.living_country.code,user)]].svg"></iron-icon>
+                </paper-input>
+              </template>
+            </div>
+            <div class='row'>
+              <template is="dom-if" if="[[_isUserProp('arrivalDate',user)]]">
+                <paper-input class='col-sm-6' label="Arrival date" type="text" value="[[user.arrivalDate]]" always-float-label readonly>
+                  <iron-icon suffix icon="calendar-check"></iron-icon>
+                </paper-input>
+              </template>
+              <template is="dom-if" if="[[_isUserProp('departureDate',user)]]">
+                <paper-input class='col-sm-6' label="Departure date" type="text" value="[[user.departureDate]]" always-float-label readonly>
+                  <iron-icon suffix icon="calendar-check"></iron-icon>
+                </paper-input>
+              </template>
+            </div>
+            <div class='row'>
+              <template is="dom-if" if="[[_isUserProp('arrivingFrom',user)]]">
+                <paper-input class='col-sm-6' label="Arriving from" type="text" value="[[user.arrivingFrom]]" always-float-label readonly></paper-input>
+              </template>
+              <template is="dom-if" if="[[_isUserProp('flight',user)]]">
+                <paper-input class='col-sm-6' label="Flight" type="text" value="[[user.flight]]" always-float-label readonly></paper-input>
+              </template>
+            </div>
+            <template is="dom-if" if="[[_isUserProp('stayingAt',user)]]">
+              <div class='row'>
+                <paper-input class='col-sm-12' label="Staying at (hotel name or anything else)" type="text" value="{{user.stayingAt}}" always-float-label readonly></paper-input>
+              </div>
+            </template>
+          </template>
+        </bootstrap-grid>
+      </div>
+    </paper-scroll-header-panel>
+
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+
+        is: 'user-details',
+
+        behaviors: [
+          Polymer.PaperDialogBehavior,
+          Polymer.NeonAnimationRunnerBehavior,
+          HOVERBOARD.UtilsBehavior,
+          HOVERBOARD.PopupBehavior
+        ],
+
+        properties: {
+          userRaw: {
+            type: Object,
+            notify: true,
+            value: null
+          },
+
+          user: {
+            type: Object,
+            value: {}
+          }
+        },
+
+        observers: [
+          '_onUserChanged(userRaw.$key)'
+        ],
+
+        listeners: {
+          'neon-animation-finish': '_onNeonAnimationFinish'
+        },
+
+        _onUserChanged: function()
+        {
+           if( this.userRaw )
+           {
+             this.user = Object.assign({},this.userRaw);
+           }
+           else
+           {
+             this.user = {}
+           }
+        },
+
+        _renderOpened: function () {
+          if (this.withBackdrop && !this.app.isPhoneSize) {
+            this.backdropElement.open();
+          }
+          this.playAnimation('entry');
+          this.async(function () {
+            this.$.scrollHeaderPanel.scroll(1, true);
+            this.$.scrollHeaderPanel.notifyResize();
+          });
+        },
+
+        _renderClosed: function () {
+          HOVERBOARD.Util.setMetaThemeColor(this._previousBrowserColor);
+          this.backdropElement.close();
+          this.playAnimation('exit');
+        },
+
+        _onNeonAnimationFinish: function (e) {
+          if (this.opened) {
+            document.body.style.overflow = 'hidden';
+            this._finishRenderOpened();
+          } else {
+            document.body.style.overflow = '';
+            this._finishRenderClosed();
+            this._checkRedirect();
+          }
+        },
+
+        _isUserProp: function(prop)
+        {
+          return( !!this.user[prop] );
+        },
+
+        _getCountryCode: function(code)
+        {
+          return(code.toLowerCase());
+        },
+
+        _isUserPrivacyEnabled: function(user)
+        {
+          switch(user.privacy || 'public')
+          {
+            case 'public':
+            {
+              return(true);
+            }
+            case 'restricted':
+            {
+              return(this.app && this.app.user);
+            }
+            case 'protected':
+            {
+              return(false);
+            }
+          }
+        }
+
+      });
+
+    }());
+  </script>
+
+</dom-module>

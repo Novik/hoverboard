@@ -6,6 +6,7 @@
 <link rel="import" href="iron-scroll-threshold.html">
 <link rel="import" href="truncate-marked-text.html">
 <link rel="import" href="organization-details.html">
+<link rel="import" href="polymerfire.html">
 <link rel="import" href="../behaviors/cascaded-behavior.html">
 <link rel="import" href="../behaviors/utils-behavior.html">
 
@@ -149,7 +150,7 @@
         </paper-input>
       </div>
       <div class="organization-wrapper">
-        <template id="organizationsList" is="dom-repeat" items="[[app.organizations]]" as="organization" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}" filter="_filter">
+        <template id="organizationsList" is="dom-repeat" items="[[organizations]]" as="organization" on-dom-change="updateCascadedNodes" rendered-item-count="{{renderedCount}}" filter="_filter">
           <div class="organization" cascaded>
             <paper-material class="card">
               <a href$="/directory/organizations?id=[[organization.$key]]" class="header" style$="[[_getLogoBackground(organization)]]" >
@@ -188,6 +189,23 @@
       exit-animation="fade-out-animation"
       with-backdrop>
     </organization-details>
+
+    <firebase-query
+      id="organizations"
+      app-name="{$ firebase.name $}"
+      path="/organizations"
+      order-by-child="participantCount"
+      start-at="1"
+      order-value-number
+      data="{{_firebaseOrganizations}}">
+    </firebase-query>
+
+    <app-indexeddb-mirror
+      session="{$ firebase.indexedDbSession $}"
+      key="filteredOrganizations"
+      data="{{_firebaseOrganizations}}"
+      persisted-data="{{organizations}}">
+    </app-indexeddb-mirror>
 
   </template>
 
@@ -239,11 +257,11 @@
         },
 
         observers: [
-          "_onChangeOrganizations(app.organizations.splices)",
-          "_onChangeOrganizationId(selected,app.organizations)"
+          "_onChangeOrganizations(organizations.splices)",
+          "_onChangeOrganizationId(selected)"
         ],
 
-        _onChangeOrganizationId: function(selected)
+        _onChangeOrganizationId: function()
         {
           if(this.selected)
           {
@@ -251,6 +269,10 @@
             {
               this.$.organizationDetails.open();
             }.bind(this));
+          }
+          else
+          {
+            this.$.organizationDetails.close();
           }
         },
 
@@ -282,7 +304,7 @@
 
         _loadMoreData: function()
         {
-          if(this.app.organizations.length)
+          if(this.organizations.length)
           {
             this._page = this._page + 1;
             this._renderedItem = 0;

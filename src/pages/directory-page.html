@@ -112,10 +112,10 @@
     </div>
 
     <template is="dom-if" if="[[_isUsersSelected(_selectedPart,app.page)]]">
-      <user-cards app="{{app}}" id="userCards" items-per-page="12" selected="{{_selectedObject}}"></user-cards>
+      <user-cards app="{{app}}" id="userCards" items-per-page="12" selected="[[_selectedUser]]"></user-cards>
     </template>
     <template is="dom-if" if="[[!_isUsersSelected(_selectedPart,app.page)]]">
-      <organization-cards app="{{app}}" id="organizationCards" items-per-page="12" selected="{{_selectedObject}}"></organization-cards>
+      <organization-cards app="{{app}}" id="organizationCards" items-per-page="12" selected="[[_selectedOrganization]]"></organization-cards>
     </template>
 
     <footer-block app="{{app}}" cascaded></footer-block>
@@ -151,12 +151,6 @@
             type: String,
             notify: true,
             value: 'users'
-          },
-
-          _selectedObject: {
-            type: String,
-            notify: true,
-            value: ''
           }
         },
 
@@ -176,9 +170,18 @@
 
         _queryParamsChanged: function(params) 
         {
-          if(this.isSelected() && (this._selectedObject != params.id))
+          if(this.isSelected())
           {
-            this._selectedObject = params.id;
+            if(this._isUsersSelected())
+            {
+              this._selectedUser = params.id;
+              this._selectedOrganization = null;
+            }
+            else
+            {
+              this._selectedOrganization = params.id;
+              this._selectedUser = null;
+            }
           }
         },
 
@@ -199,7 +202,7 @@
 
         _resetIdParam: function() 
         {
-          this.set('queryParams.id', null);
+            this.set('queryParams.id', null);
         },
 
         _getCustomStyleValue: function (value) {
