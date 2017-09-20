@@ -274,7 +274,7 @@
 
         _signToOrganization: function(org,value)
         {
-          if(org.trim().length)
+          if(org && org.trim().length)
           {
             firebase.app("{$ firebase.name $}").database().ref("/organizationDetails/"+this._slugify(org)).once("value").then(function(snap)
             {
